@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magazyn-API", "Magazyn-API\Magazyn-API.csproj", "{37F74C25-05A4-4775-B366-2386AE67ACA8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37F74C25-05A4-4775-B366-2386AE67ACA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F74C25-05A4-4775-B366-2386AE67ACA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F74C25-05A4-4775-B366-2386AE67ACA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F74C25-05A4-4775-B366-2386AE67ACA8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {963534FC-DB83-463B-8A1A-F36D9FD51A34}
+	EndGlobalSection
+EndGlobal
