@@ -25,10 +25,10 @@ namespace Magazyn_API.Model.Excel
 
         public async Task<IExcelOrder> LoadOrder(ExcelTypes type)
         {
-            using var package = new ExcelPackage(file);
-            //using (ExcelPackage package = new ExcelPackage(file, "password"))
+            using var package = new ExcelPackage();
+            FileStream stream = new(file.ToString(), FileMode.Open, FileAccess.Read);
 
-            await package.LoadAsync(file);
+            await package.LoadAsync(stream);
             var ws = package.Workbook.Worksheets[0];
 
             ExcelFactory factory = new();
@@ -38,6 +38,7 @@ namespace Magazyn_API.Model.Excel
             LoadOrderInfo();
             LoadComponentsAndItems();
 
+            closeConnection();
             return excelOrder;
 
             void LoadComponentsAndItems()
@@ -101,6 +102,12 @@ namespace Magazyn_API.Model.Excel
             string getCell(Cell cell)
             {
                 return ws.Cells[cell.Row, cell.Col].Value?.ToString();
+            }
+
+            void closeConnection()
+            {
+                stream.Dispose();
+                package.Dispose();
             }
         }
     }

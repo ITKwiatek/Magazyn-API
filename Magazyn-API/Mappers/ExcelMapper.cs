@@ -41,7 +41,7 @@ namespace Magazyn_API.AutoMapper
             foreach(var eI in eOrder.OrderItems)
             {
                 var item = new OrderItem();
-                item.Quantity = eI.Count;
+                item.RequiredQuantity = eI.Count;
                 item.Order = order;
                 item.Component = _mapper.Map<ComponentModel>(eI.ExcelComponent);
                 order.OrderItems.Add(item);

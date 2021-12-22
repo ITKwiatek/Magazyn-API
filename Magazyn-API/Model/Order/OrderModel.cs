@@ -19,11 +19,18 @@ namespace Magazyn_API.Model.Order
         public int? IssuerId { get; set; }
         public Person? Issuer { get; set; }
         public DateTime DateToWarehouse { get; set; }
-        public DateTime DateRelease { get; set; }
+        public DateTime ReleaseDate { get; set; }
+        public DateTime DateToRelease { get; set; }
         public DateTime DateToEP { get; set; }
         public int? ReceiverId { get; set; }
         public Person? Receiver { get; set; }
-        //public Release? Release { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public OrderState State { get; set; }
     }
+
+    public enum OrderState
+    {
+        NOWY, W_TRAKCIE, ZAKONCZONY
+    }
+
 }

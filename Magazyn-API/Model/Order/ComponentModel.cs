@@ -9,14 +9,6 @@ namespace Magazyn_API.Model.Order
 {
     public class ComponentModel : IComponentModel
     {
-        public ComponentModel(string articleNumber, string orderingNumber, string supplier, string sAP, string description)
-        {
-            ArticleNumber = articleNumber;
-            OrderingNumber = orderingNumber;
-            Supplier = supplier;
-            SAP = sAP;
-            Description = description;
-        }
 
         [Key, ForeignKey("OrderItem")]
         public int Id { get; set; }
@@ -24,7 +16,7 @@ namespace Magazyn_API.Model.Order
         public string ArticleNumber { get; set; }
         [MaxLength(30)]
         public string OrderingNumber { get; set; }
-        [MaxLength(30)]
+        [MaxLength(35)]
         public string Supplier { get; set; }
         [MaxLength(30)]
         public string SAP { get; set; }
