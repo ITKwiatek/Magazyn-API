@@ -2,6 +2,7 @@
 using Magazyn_API.Model.Excel;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FromExcelDto;
+using Magazyn_API.Model.Order.FrontendDto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ namespace Magazyn_API.Mappers
     {
         public AutoMapperProfile()
         {
-            CreateMap<IExcelComponent, ComponentModel>()
+            CreateMap<IComponentModel, ComponentModel>()
                 .ForMember(dest => dest.ArticleNumber,
                 opt => opt.MapFrom(src => src.ArticleNumber))
                 .ForMember(dest => dest.OrderingNumber,
@@ -27,6 +28,9 @@ namespace Magazyn_API.Mappers
                 opt => opt.MapFrom(src => src.Description));
 
             CreateMap<IExcelComponent, ComponentModelFromExcelDto>();
+            CreateMap<Person, PersonInfo>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Surname, opt => opt.MapFrom(src => src.Surname));
         }
     }
 }

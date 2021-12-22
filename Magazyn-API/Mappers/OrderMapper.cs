@@ -26,7 +26,7 @@ namespace Magazyn_API.Mappers
                 OrderItem item = new();
                 item.Component = Component(itemDto.Component);
                 item.Order = order;
-                item.Quantity = itemDto.Quantity;
+                item.RequiredQuantity = itemDto.Quantity;
                 order.OrderItems.Add(item);
             }
             return order;
@@ -34,13 +34,16 @@ namespace Magazyn_API.Mappers
 
         public ComponentModel Component(ComponentModelFromExcelDto componentDto)
         {
+            ComponentModel comp = new();
             if (!_repo.ExistsInDb(componentDto))
-                return new ComponentModel(
-                    componentDto.ArticleNumber,
-                    componentDto.Description,
-                    componentDto.OrderingNumber,
-                    componentDto.SAP,
-                    componentDto.Supplier);
+            {
+                comp.ArticleNumber = componentDto.ArticleNumber;
+                comp.Description = componentDto.Description;
+                comp.SAP = componentDto.SAP;
+                comp.Supplier = componentDto.Supplier;
+                comp.OrderingNumber = componentDto.OrderingNumber;
+                return comp;
+            }
             else
                 return _repo.GetComponent(componentDto);
         }

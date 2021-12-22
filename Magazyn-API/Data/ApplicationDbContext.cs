@@ -9,8 +9,15 @@ using System.Text;
 
 namespace Magazyn_API.Data
 {
+
     public class ApplicationDbContext : IdentityDbContext
     {
+        private readonly string _connectionString;
+
+        public ApplicationDbContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
         public DbSet<OrderModel> Orders { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Device> Devices { get; set; }
