@@ -2,6 +2,7 @@
 using Magazyn_API.Model.Order.FrontendDto;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace Magazyn_API.Mappers
         public OrderCard OrderCard(OrderModel order)
         {
             OrderCard card = new();
-            card.DateRelease = order.DateRelease;
+            card.DateToRelease = order.DateToRelease;
             card.DateToWarehouse = order.DateToWarehouse;
             card.DeviceName = order.Device.Name;
             card.Id = order.Id;
@@ -20,7 +21,6 @@ namespace Magazyn_API.Mappers
             card.State = order.State;
             card.FinishedItemsCount = getFinishedCount();
             card.ItemsCount = order.OrderItems.Count;
-
             return card;
 
             int getFinishedCount()

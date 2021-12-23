@@ -51,8 +51,6 @@ namespace Magazyn_API.AutoMapper
                 order.DateToEP = eOrder.DateToEP;
             if (eOrder.DateToWarehouse != DateTime.MinValue)
                 order.DateToWarehouse = eOrder.DateToWarehouse;
-            if (eOrder.ReleaseDate != DateTime.MinValue)
-                order.DateRelease = eOrder.ReleaseDate;
 
             return order;
         }

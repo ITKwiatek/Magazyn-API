@@ -1,4 +1,5 @@
 ﻿using Magazyn_API.Model.Excel;
+using Magazyn_API.Model.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,8 @@ namespace Magazyn_API.Model.Mappers
     {
         public string ProjectName { get; set; }
         public string DeviceName { get; set; }
-        public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        public DateTime DateToEP { get; set; }
         public Cell DateToEPCell { get; set; }
         public Cell DateToWarehouseCell { get; set; }
         public Cell ReleaseDateCell { get; set; }

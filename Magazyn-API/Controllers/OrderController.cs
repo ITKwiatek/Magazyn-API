@@ -2,6 +2,7 @@
 using Magazyn_API.Mappers;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
 {
+    [EnableCors("MyPolicy")]
     [ApiController]
     [Route("[controller]")]
     public class OrdersController : Controller

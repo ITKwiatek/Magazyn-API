@@ -88,9 +88,6 @@ namespace Magazyn_API.Model.Excel
             {                
                 if (excelOrder is IExcelOrderDates)
                 {
-                    if (!string.IsNullOrWhiteSpace(getCell(excelOrder.ReleaseDateCell)))
-                        excelOrder.ReleaseDate = DateTime.Parse(getCell(excelOrder.ReleaseDateCell));
-
                     if (!string.IsNullOrWhiteSpace(getCell(excelOrder.DateToEPCell)))
                         excelOrder.DateToEP = DateTime.Parse(getCell(excelOrder.DateToEPCell));
 

@@ -13,7 +13,6 @@ namespace Magazyn_API.Model.Excel.GR_1
         public List<IExcelOrderItem> OrderItems { get; set; }
         public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }
-        public DateTime ReleaseDate { get; set; }
         public Cell ProjectNameCell { get; set; } = new(2, 5);
         public Cell DeviceNameCell { get; set; } = new(2, 7);
         public Cell DateToEPCell { get; set; }

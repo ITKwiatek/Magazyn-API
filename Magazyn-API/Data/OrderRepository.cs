@@ -142,11 +142,9 @@ namespace Magazyn_API.Data
             orderDb.ConfirmedById = order.ConfirmedById;
             orderDb.ReleaseDate = order.ReleaseDate;
             orderDb.DateToRelease = order.DateToRelease;
-            orderDb.DateToEP = order.DateToEP;
-            orderDb.DateToWarehouse = order.DateToWarehouse;
-            orderDb.IssuerId = order.IssuerId;
             orderDb.ReceiverId = order.ReceiverId;
             orderDb.State = s.UpdateState(order.Id);
+
             foreach(var item in order.OrderItems)
             {
                 UpdateItem(item);
@@ -173,6 +171,18 @@ namespace Magazyn_API.Data
         }
         #endregion Order
         #region OrderItem
+        public bool ExistsInDb(OrderItem item)
+        {
+            if (GetItemById(item.Id) != null)
+                return true;
+            return false;
+        }
+        public OrderItem GetItemById(int id)
+        {
+            var item = _db.OrderItems.FirstOrDefault(i => i.Id == id);
+            item.Component = GetComponentById(item.ComponentId);
+            return item;
+        }
         public List<OrderItem> GetItemsByOrderId(int orderId)
         {
             List<OrderItem> items = _db.OrderItems.Where(i => i.OrderId == orderId).ToList();
@@ -186,9 +196,18 @@ namespace Magazyn_API.Data
         }
         public bool UpdateItem(OrderItem item)
         {
-            _db.Update(item);
-            _db.SaveChanges();
-            return true;
+            if (ExistsInDb(item))
+            {
+                var itemDb = GetItemById(item.Id);
+                if (itemDb != item)
+                {
+                    itemDb.CurrentQuantity = item.CurrentQuantity;
+                    _db.Update(itemDb);
+                    _db.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
         }
         public bool SaveItem(OrderItem item)
         {
