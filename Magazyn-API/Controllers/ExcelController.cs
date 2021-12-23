@@ -16,23 +16,31 @@ using Magazyn_API.Model.Order.FromExcelDto;
 using Magazyn_API.Mappers;
 using Magazyn_API.Model.Mappers;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Cors;
+using System.Net.Http;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Magazyn_API.Controllers
 {
+    [EnableCors("MyPolicy")]
     [ApiController]
     [Route("[controller]")]
     public class ExcelController : Controller
     {
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _eviroment;
         private readonly ApplicationDbContext _db;
         private readonly IOrderRepository _repo;
-        public ExcelController(IMapper mapper, IOrderRepository repo, ApplicationDbContext db)
+        public ExcelController(IMapper mapper, IOrderRepository repo, ApplicationDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
             _repo = repo;
             _mapper = mapper;
+            _eviroment = environment;
         }
-        [HttpGet("")]
+        [HttpPost("")]
         public async Task<IActionResult> Read([FromBody]JObject data)
         {
             string path = data["path"].ToString();
@@ -51,6 +59,28 @@ namespace Magazyn_API.Controllers
                 return Json(e.Message);
             }
         }
+
+        [HttpPost("Read/{excelType}")]
+        public async Task<bool> ReadExcel(IFormFile file, [FromRoute] ExcelTypes excelType)
+        {
+            if (file != null)
+            {
+                string filePath = Path.Combine("",_eviroment.ContentRootPath + file.FileName);
+                try
+                {
+                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }                                      
+                } catch (Exception e)                      
+                {                                          
+                    return false;                        
+                }                                          
+                                                           
+            }
+            return true;
+        }
+
         [HttpPost("Save")]
         public async Task<bool> Save(OrderModelFromExcelDto orderDto)
         {
