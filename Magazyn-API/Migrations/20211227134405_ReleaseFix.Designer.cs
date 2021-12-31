@@ -4,14 +4,16 @@ using Magazyn_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Magazyn_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211227134405_ReleaseFix")]
+    partial class ReleaseFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,89 +224,15 @@ namespace Magazyn_API.Migrations
                     b.Property<int>("OrderItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderItemId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ReleaseId", "OrderItemId");
 
-                    b.HasIndex("OrderItemId");
-
-                    b.HasIndex("OrderItemId1")
-                        .IsUnique()
-                        .HasFilter("[OrderItemId1] IS NOT NULL");
+                    b.HasIndex("OrderItemId")
+                        .IsUnique();
 
                     b.ToTable("ReleaseItems");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ComponentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RequiredQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VirtualOrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VirtualOrderModelId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("VirtualOrderId");
-
-                    b.HasIndex("VirtualOrderModelId");
-
-                    b.ToTable("VirtualItems");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualManyToMany", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VirtualOrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId", "VirtualOrderId");
-
-                    b.HasIndex("VirtualOrderId");
-
-                    b.ToTable("ManyToMany");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrderModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.ToTable("VirtualOrders");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -583,14 +511,10 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.ReleaseItem", b =>
                 {
                     b.HasOne("Magazyn_API.Model.Order.OrderItem", "OrderItem")
-                        .WithMany()
-                        .HasForeignKey("OrderItemId")
+                        .WithOne("ReleaseItem")
+                        .HasForeignKey("Magazyn_API.Model.Order.ReleaseItem", "OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Magazyn_API.Model.Order.OrderItem", null)
-                        .WithOne("ReleaseItem")
-                        .HasForeignKey("Magazyn_API.Model.Order.ReleaseItem", "OrderItemId1");
 
                     b.HasOne("Magazyn_API.Model.Order.Release", "Release")
                         .WithMany("ReleaseItems")
@@ -601,57 +525,6 @@ namespace Magazyn_API.Migrations
                     b.Navigation("OrderItem");
 
                     b.Navigation("Release");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualItem", b =>
-                {
-                    b.HasOne("Magazyn_API.Model.Order.ComponentModel", "Component")
-                        .WithMany()
-                        .HasForeignKey("ComponentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", "VirtualOrder")
-                        .WithMany()
-                        .HasForeignKey("VirtualOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("VirtualOrderModelId");
-
-                    b.Navigation("Component");
-
-                    b.Navigation("VirtualOrder");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualManyToMany", b =>
-                {
-                    b.HasOne("Magazyn_API.Model.Order.OrderModel", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", "VirtualOrder")
-                        .WithMany()
-                        .HasForeignKey("VirtualOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("VirtualOrder");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrderModel", b =>
-                {
-                    b.HasOne("Magazyn_API.Model.Order.Person", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -742,11 +615,6 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.Release", b =>
                 {
                     b.Navigation("ReleaseItems");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrderModel", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

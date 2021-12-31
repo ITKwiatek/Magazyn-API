@@ -4,14 +4,16 @@ using Magazyn_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Magazyn_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211229105130_virtual3")]
+    partial class virtual3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,7 +257,7 @@ namespace Magazyn_API.Migrations
                     b.Property<int>("VirtualOrderId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VirtualOrderModelId")
+                    b.Property<int?>("VirtualOrderId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -264,7 +266,7 @@ namespace Magazyn_API.Migrations
 
                     b.HasIndex("VirtualOrderId");
 
-                    b.HasIndex("VirtualOrderModelId");
+                    b.HasIndex("VirtualOrderId1");
 
                     b.ToTable("VirtualItems");
                 });
@@ -281,7 +283,7 @@ namespace Magazyn_API.Migrations
 
                     b.HasIndex("VirtualOrderId");
 
-                    b.ToTable("ManyToMany");
+                    b.ToTable("VirtualManyToMany");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrderModel", b =>
@@ -293,9 +295,6 @@ namespace Magazyn_API.Migrations
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -611,15 +610,15 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", "VirtualOrder")
+                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", null)
                         .WithMany()
                         .HasForeignKey("VirtualOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", null)
+                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", "VirtualOrder")
                         .WithMany("OrderItems")
-                        .HasForeignKey("VirtualOrderModelId");
+                        .HasForeignKey("VirtualOrderId1");
 
                     b.Navigation("Component");
 

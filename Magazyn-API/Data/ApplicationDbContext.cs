@@ -26,6 +26,9 @@ namespace Magazyn_API.Data
         public DbSet<ReleaseItem> ReleaseItems { get; set; }
         public DbSet<Release> Releases { get; set; }
         public DbSet<Person> Persons { get; set; }
+        public DbSet<VirtualItem> VirtualItems { get; set; }
+        public DbSet<VirtualOrderModel> VirtualOrders { get; set; }
+        public DbSet<VirtualManyToMany> ManyToMany { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -35,6 +38,8 @@ namespace Magazyn_API.Data
             base.OnModelCreating(builder);
             builder.Entity<ReleaseItem>()
                 .HasKey(r => new { r.ReleaseId, r.OrderItemId });
+            builder.Entity<VirtualManyToMany>()
+                .HasKey(r => new { r.OrderId, r.VirtualOrderId });
             builder.Entity<Person>()
                 .HasKey(p => p.Id);
 
@@ -55,9 +60,9 @@ namespace Magazyn_API.Data
 
             //ReleaseItem has One OrderItem
             builder.Entity<OrderItem>()
-                .HasOne<ReleaseItem>(o => o.ReleaseItem)
+                .HasMany<ReleaseItem>()
                 .WithOne(r => r.OrderItem)
-                .HasForeignKey<ReleaseItem>(r => r.OrderItemId);
+                .HasForeignKey(r => r.OrderItemId);
 
             //ReleaseItem has one Release
             //Release has many ReleaseItems
@@ -76,8 +81,8 @@ namespace Magazyn_API.Data
             //Release has one Order
             builder.Entity<Release>()
                 .HasOne<OrderModel>(r => r.Order)
-                .WithOne()
-                .HasForeignKey<Release>(r => r.OrderId);
+                .WithMany()
+                .HasForeignKey(r => r.OrderId);
 
             //Order has one device
             //Device has many Orders
@@ -135,6 +140,21 @@ namespace Magazyn_API.Data
             builder.Entity<OrderModel>()
                 .Property(o => o.Id)
                 .ValueGeneratedOnAdd();
+
+            //Virtual Order has many orders
+            builder.Entity<VirtualOrderModel>().HasMany(v => v.Orders)
+                .WithMany(o => o.VirtualOrders)
+                .UsingEntity<VirtualManyToMany>(
+                    v => v.HasOne(v => v.Order)
+                    .WithMany().HasForeignKey(v => v.OrderId),
+                    o => o.HasOne(o => o.VirtualOrder)
+                    .WithMany().HasForeignKey(o => o.VirtualOrderId));
+
+            //VirtualOrder has many Items
+            builder.Entity<VirtualItem>()
+                .HasOne<VirtualOrderModel>(v => v.VirtualOrder)
+                .WithMany()
+                .HasForeignKey(i => i.VirtualOrderId);
         }
     }
 }

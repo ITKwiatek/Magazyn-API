@@ -27,6 +27,7 @@ namespace Magazyn_API.Model.Order
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public OrderState State { get; set; }
         public bool IsActive { get; set; }
+        public List<VirtualOrderModel> VirtualOrders { get; set; }
     }
 
     public enum OrderState

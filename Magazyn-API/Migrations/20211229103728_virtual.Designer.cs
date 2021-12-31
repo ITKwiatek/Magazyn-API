@@ -4,14 +4,16 @@ using Magazyn_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Magazyn_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211229103728_virtual")]
+    partial class @virtual
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,7 +283,7 @@ namespace Magazyn_API.Migrations
 
                     b.HasIndex("VirtualOrderId");
 
-                    b.ToTable("ManyToMany");
+                    b.ToTable("VirtualManyToMany");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrderModel", b =>
@@ -293,12 +295,6 @@ namespace Magazyn_API.Migrations
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -611,7 +607,7 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", "VirtualOrder")
+                    b.HasOne("Magazyn_API.Model.Order.VirtualOrderModel", null)
                         .WithMany()
                         .HasForeignKey("VirtualOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -622,8 +618,6 @@ namespace Magazyn_API.Migrations
                         .HasForeignKey("VirtualOrderModelId");
 
                     b.Navigation("Component");
-
-                    b.Navigation("VirtualOrder");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.VirtualManyToMany", b =>

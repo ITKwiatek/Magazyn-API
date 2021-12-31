@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Magazyn_API.Service;
 
 namespace Magazyn_API.Controllers
 {
@@ -44,11 +45,10 @@ namespace Magazyn_API.Controllers
         public async Task<IActionResult> Read([FromBody]JObject data)
         {
             string path = data["path"].ToString();
-            ExcelTypes excelType = data["excelType"].ToObject<ExcelTypes>();
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelTypes excelType = data["excelType"].ToObject<ExcelTypes>();     
             try
             {
-                ExcelReader reader = new ExcelReader(new FileInfo(path));
+                ExcelReader reader = new ExcelReader(path);
                 IExcelOrder excelOrder = await reader.LoadOrder(excelType);
                 FromExcelMapper myMapper = new FromExcelMapper(_mapper);
                 OrderModelFromExcelDto order = myMapper.Order(excelOrder);
@@ -61,24 +61,38 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpPost("Read/{excelType}")]
-        public async Task<bool> ReadExcel(IFormFile file, [FromRoute] ExcelTypes excelType)
+        public async Task<IActionResult> ReadExcel(IFormFile file, [FromRoute] ExcelTypes excelType)
         {
+            string path = "";
             if (file != null)
             {
-                string filePath = Path.Combine("",_eviroment.ContentRootPath + file.FileName);
-                try
+                FileHelper helper = new FileHelper("C:\\temp\\delete\\");
+                await helper.DeleteFilesInDir();
+                path = await helper.SaveFile(file);
+                if (!string.IsNullOrWhiteSpace(path)) 
                 {
-                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                    try
                     {
-                        await file.CopyToAsync(fileStream);
-                    }                                      
-                } catch (Exception e)                      
-                {                                          
-                    return false;                        
-                }                                          
-                                                           
+                        ExcelReader reader = new ExcelReader(path);
+                        IExcelOrder excelOrder = await reader.LoadOrder(excelType);
+
+                        FromExcelMapper mapper = new FromExcelMapper(_mapper);
+                        OrderModelFromExcelDto orderDto = mapper.Order(excelOrder);
+
+                        OrderMapper oMapper = new OrderMapper(_repo);
+                        OrderModel model = oMapper.Order(orderDto);
+
+                        _repo.SaveOrder(model);
+                        int id = _repo.GetOrderId(model);
+
+                        return Ok(id);
+                    } catch (Exception e)
+                    {
+                        return Json(e.Message);
+                    }
+                }
             }
-            return true;
+            return Json("Serwer nie był w stanie wczytać pliku...");
         }
 
         [HttpPost("Save")]
@@ -88,6 +102,13 @@ namespace Magazyn_API.Controllers
             OrderModel order = oM.Order(orderDto);
             var response = _repo.SaveOrder(order);
             return response;
+        }
+
+        [HttpGet("Add")]
+        public async Task<int> Add(OrderModel order)
+        {
+
+            return 0;
         }
     }
 }

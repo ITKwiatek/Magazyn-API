@@ -16,17 +16,18 @@ namespace Magazyn_API.Model.Excel
 {
     public class ExcelReader
     {
-        public FileInfo file { get; set; }
+        public string file { get; set; }
 
-        public ExcelReader(FileInfo path)
+        public ExcelReader(string path)
         {
             file = path;
         }
 
         public async Task<IExcelOrder> LoadOrder(ExcelTypes type)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package = new ExcelPackage();
-            FileStream stream = new(file.ToString(), FileMode.Open, FileAccess.Read);
+            FileStream stream = new(file, FileMode.Open, FileAccess.Read);
 
             await package.LoadAsync(stream);
             var ws = package.Workbook.Worksheets[0];

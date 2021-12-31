@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Order.FrontendDto
 {
-    public class PersonInfo
+    public class VirtualItemFrontendDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        public int VirtualOrderId { get; set; }
+        public ComponentModel Component { get; set; }
+        public int RequiredQuantity { get; set; }
     }
 }

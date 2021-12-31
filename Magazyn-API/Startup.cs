@@ -36,7 +36,8 @@ namespace Magazyn_API
                     builder =>
                     {
                         builder.WithOrigins("http://localhost:4200")
-                                .WithMethods("PUT", "DELETE", "GET", "POST");
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
                     });
             });
 
@@ -75,7 +76,7 @@ namespace Magazyn_API
 
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors("MyPolicy");
 
             app.UseEndpoints(endpoints =>
             {

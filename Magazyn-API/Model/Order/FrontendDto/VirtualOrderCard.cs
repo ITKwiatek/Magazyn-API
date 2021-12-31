@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Order.FrontendDto
 {
-    public class PersonInfo
+    public class VirtualOrderCard
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Surname { get; set; }
+        public PersonInfo? CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public List<int> OrdersIds { get; set; } = new();
     }
 }
