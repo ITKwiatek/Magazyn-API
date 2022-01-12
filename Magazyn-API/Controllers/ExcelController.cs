@@ -22,10 +22,14 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Magazyn_API.Service;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Magazyn_API.Model.Auth;
 
 namespace Magazyn_API.Controllers
 {
-    [EnableCors("MyPolicy")]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ExcelController : Controller
@@ -34,31 +38,33 @@ namespace Magazyn_API.Controllers
         private readonly IWebHostEnvironment _eviroment;
         private readonly ApplicationDbContext _db;
         private readonly IOrderRepository _repo;
-        public ExcelController(IMapper mapper, IOrderRepository repo, ApplicationDbContext db, IWebHostEnvironment environment)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ExcelController(IMapper mapper, IOrderRepository repo, ApplicationDbContext db, IWebHostEnvironment environment, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _repo = repo;
             _mapper = mapper;
             _eviroment = environment;
+            _userManager = userManager;
         }
-        [HttpPost("")]
-        public async Task<IActionResult> Read([FromBody]JObject data)
-        {
-            string path = data["path"].ToString();
-            ExcelTypes excelType = data["excelType"].ToObject<ExcelTypes>();     
-            try
-            {
-                ExcelReader reader = new ExcelReader(path);
-                IExcelOrder excelOrder = await reader.LoadOrder(excelType);
-                FromExcelMapper myMapper = new FromExcelMapper(_mapper);
-                OrderModelFromExcelDto order = myMapper.Order(excelOrder);
+        //[HttpPost("")]
+        //public async Task<IActionResult> Read([FromBody]JObject data)
+        //{
+        //    string path = data["path"].ToString();
+        //    ExcelTypes excelType = data["excelType"].ToObject<ExcelTypes>();     
+        //    try
+        //    {
+        //        ExcelReader reader = new ExcelReader(path);
+        //        IExcelOrder excelOrder = await reader.LoadOrder(excelType);
+        //        FromExcelMapper myMapper = new FromExcelMapper(_mapper);
+        //        OrderModelFromExcelDto order = myMapper.Order(excelOrder);
 
-                return Json(order);
-            } catch(Exception e)
-            {
-                return Json(e.Message);
-            }
-        }
+        //        return Json(order);
+        //    } catch(Exception e)
+        //    {
+        //        return Json(e.Message);
+        //    }
+        //}
 
         [HttpPost("Read/{excelType}")]
         public async Task<IActionResult> ReadExcel(IFormFile file, [FromRoute] ExcelTypes excelType)
@@ -81,6 +87,13 @@ namespace Magazyn_API.Controllers
 
                         OrderMapper oMapper = new OrderMapper(_repo);
                         OrderModel model = oMapper.Order(orderDto);
+                        var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+                        IEnumerable<Claim> claim = identity.Claims;
+                        var userEmail = claim
+                            .Where(x => x.Type == ClaimTypes.Email)
+                            .FirstOrDefault().Value.ToString();
+                        model.ConfirmedBy = await _userManager.FindByEmailAsync(userEmail.ToUpperInvariant());
 
                         _repo.SaveOrder(model);
                         int id = _repo.GetOrderId(model);
@@ -95,14 +108,24 @@ namespace Magazyn_API.Controllers
             return Json("Serwer nie był w stanie wczytać pliku...");
         }
 
-        [HttpPost("Save")]
-        public async Task<bool> Save(OrderModelFromExcelDto orderDto)
-        {
-            OrderMapper oM = new OrderMapper(_repo);
-            OrderModel order = oM.Order(orderDto);
-            var response = _repo.SaveOrder(order);
-            return response;
-        }
+        //[HttpPost("Save")]
+        //public async Task<bool> Save(OrderModelFromExcelDto orderDto)
+        //{
+        //    OrderMapper oM = new OrderMapper(_repo);
+        //    OrderModel order = oM.Order(orderDto);
+
+        //    var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+        //    IEnumerable<Claim> claim = identity.Claims;
+        //    var userEmail = claim
+        //        .Where(x => x.Type == ClaimTypes.Email)
+        //        .FirstOrDefault().Value.ToString();
+
+        //    order.ConfirmedBy = await _userManager.FindByEmailAsync(userEmail.ToUpperInvariant());
+
+        //    var response = _repo.SaveOrder(order);
+        //    return response;
+        //}
 
         [HttpGet("Add")]
         public async Task<int> Add(OrderModel order)

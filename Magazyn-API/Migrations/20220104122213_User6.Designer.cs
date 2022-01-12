@@ -4,14 +4,16 @@ using Magazyn_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Magazyn_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220104122213_User6")]
+    partial class User6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +40,6 @@ namespace Magazyn_API.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -67,10 +65,6 @@ namespace Magazyn_API.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Surname")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -180,8 +174,8 @@ namespace Magazyn_API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ConfirmedById")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ConfirmedById")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateToEP")
                         .HasColumnType("datetime2");
@@ -198,6 +192,12 @@ namespace Magazyn_API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("IssuerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReceiverId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -210,7 +210,38 @@ namespace Magazyn_API.Migrations
 
                     b.HasIndex("DeviceId");
 
+                    b.HasIndex("IssuerId");
+
+                    b.HasIndex("ReceiverId");
+
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Surname")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique()
+                        .HasFilter("[ApplicationUserId] IS NOT NULL");
+
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Project", b =>
@@ -239,21 +270,16 @@ namespace Magazyn_API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("IssuerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("ReleasedDate")
+                    b.Property<DateTime>("ReceiveDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("ReceiverId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("IssuerId");
+                    b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
@@ -334,8 +360,8 @@ namespace Magazyn_API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -513,8 +539,8 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Magazyn_API.Model.Order.OrderModel", b =>
                 {
-                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "ConfirmedBy")
-                        .WithMany()
+                    b.HasOne("Magazyn_API.Model.Order.Person", "ConfirmedBy")
+                        .WithMany("OrderConfirmings")
                         .HasForeignKey("ConfirmedById");
 
                     b.HasOne("Magazyn_API.Model.Order.Device", "Device")
@@ -523,29 +549,44 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Magazyn_API.Model.Order.Person", "Issuer")
+                        .WithMany("OrderIssuers")
+                        .HasForeignKey("IssuerId");
+
+                    b.HasOne("Magazyn_API.Model.Order.Person", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId");
+
                     b.Navigation("ConfirmedBy");
 
                     b.Navigation("Device");
+
+                    b.Navigation("Issuer");
+
+                    b.Navigation("Receiver");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.Person", b =>
+                {
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "ApplicationUser")
+                        .WithOne()
+                        .HasForeignKey("Magazyn_API.Model.Order.Person", "ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Release", b =>
                 {
-                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Issuer")
-                        .WithMany()
-                        .HasForeignKey("IssuerId");
-
                     b.HasOne("Magazyn_API.Model.Order.OrderModel", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Receiver")
-                        .WithMany()
+                    b.HasOne("Magazyn_API.Model.Order.Person", "Receiver")
+                        .WithMany("ReleaseReceivers")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Issuer");
 
                     b.Navigation("Order");
 
@@ -615,7 +656,7 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrder", b =>
                 {
-                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "CreatedBy")
+                    b.HasOne("Magazyn_API.Model.Order.Person", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -686,6 +727,15 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.OrderModel", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.Person", b =>
+                {
+                    b.Navigation("OrderConfirmings");
+
+                    b.Navigation("OrderIssuers");
+
+                    b.Navigation("ReleaseReceivers");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Project", b =>

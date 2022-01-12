@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Excel;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FromExcelDto;
@@ -28,9 +29,9 @@ namespace Magazyn_API.Mappers
                 opt => opt.MapFrom(src => src.Description));
 
             CreateMap<IExcelComponent, ComponentModelFromExcelDto>();
-            CreateMap<Person, PersonInfo>()
+            CreateMap<ApplicationUser, PersonInfo>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.Surname, opt => opt.MapFrom(src => src.Surname));
         }
     }

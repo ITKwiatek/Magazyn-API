@@ -13,7 +13,7 @@ namespace Magazyn_API.Model.Order
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int VirtualOrderId { get; set; }
-        public VirtualOrderModel VirtualOrder { get; set; }
+        public VirtualOrder VirtualOrder { get; set; }
         public int ComponentId { get; set; }
         public ComponentModel Component { get; set; }
         public int RequiredQuantity { get; set; }

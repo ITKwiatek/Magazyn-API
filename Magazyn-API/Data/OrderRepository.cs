@@ -1,4 +1,5 @@
-﻿using Magazyn_API.Model.Order;
+﻿using Magazyn_API.Model.Auth;
+using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
 using Magazyn_API.Service;
 using Microsoft.EntityFrameworkCore;
@@ -127,6 +128,19 @@ namespace Magazyn_API.Data
             _db.SaveChanges();
             return true;
         }
+        public List<OrderModel> GetOrdersByVirtualOrderId(int virtualOrderId)
+        {
+            List<OrderModel> orders = new();
+            List<VirtualManyToMany> many = _db.ManyToMany.Where(m => m.VirtualOrderId == virtualOrderId).ToList();
+            foreach (var m in many)
+            {
+                var order = GetOrderWithItemsById(m.OrderId);
+                if(!orders.Contains(order))
+                    orders.Add(order);
+            }
+
+            return orders;
+        }
         public List<OrderModel> GetAllOrders()
         {
             var orders =_db.Orders.ToList();
@@ -136,13 +150,9 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if(o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
-
         public List<OrderModel> GetActiveOrders()
         {
             var orders = _db.Orders.Where(o => o.IsActive).ToList();
@@ -152,9 +162,6 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if (o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
@@ -167,9 +174,6 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if (o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
@@ -185,9 +189,6 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if (o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
@@ -203,9 +204,6 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if (o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
@@ -221,9 +219,6 @@ namespace Magazyn_API.Data
             {
                 o.Device = GetDeviceById(o.DeviceId);
                 o.OrderItems = GetItemsByOrderId(o.Id);
-                o.Receiver = new();
-                if (o.ReceiverId.HasValue)
-                    o.Receiver = GetPersonById((int)o.ReceiverId);
             }
             return orders;
         }
@@ -239,7 +234,7 @@ namespace Magazyn_API.Data
         {
             OrderModel order = _db.Orders.Where(o => o.Id == id).FirstOrDefault();
             if (order == null)
-                return new OrderModel();
+                return order;
             order.OrderItems = GetItemsByOrderId(id);
             order.Device = GetDeviceById(order.DeviceId);
             return order;
@@ -257,10 +252,6 @@ namespace Magazyn_API.Data
                 return false;
             OrderModel orderDb = GetOrderWithItemsById(order.Id);
             orderDb.IsActive = order.IsActive;
-            if (order.Issuer != null)
-                orderDb.Issuer = order.Issuer;
-            if (order.Receiver != null)
-                orderDb.Receiver = order.Receiver;
             if(order.ReleaseDate > DateTime.MinValue)
                 orderDb.ReleaseDate = order.ReleaseDate;
             if (order.ConfirmedBy != null)
@@ -302,7 +293,6 @@ namespace Magazyn_API.Data
             orderDb.ConfirmedById = order.ConfirmedById;
             orderDb.ReleaseDate = order.ReleaseDate;
             orderDb.DateToRelease = order.DateToRelease;
-            orderDb.ReceiverId = order.ReceiverId;
             orderDb.State = s.UpdateState(order.Id);
 
             foreach(var item in order.OrderItems)
@@ -392,23 +382,82 @@ namespace Magazyn_API.Data
         }
         #endregion Project
         #region Person
-        public Person GetPersonById(int id)
+        public ApplicationUser GetPersonById(string id)
         {
-            var p =_db.Persons.Where(p => p.Id == id).FirstOrDefault();
-            if (p == null)
-                p = new Person();
+            var p =_db.Users.Where(p => p.Id == id).FirstOrDefault();
+
             return p;
         }
         #endregion Person
-
-        #region VirtualOrder
-        public List<VirtualOrderModel> GetAllVirtualOrdersWithItems()
+        #region Release
+        public Release GetReleaseWithoutItemsById(int id)
         {
-            List < VirtualOrderModel > vOrders = _db.VirtualOrders.ToList();
+            var model = _db.Releases.FirstOrDefault(r => r.Id == id);
+            if(model != null)
+            {
+                model.Issuer = GetPersonById(model.IssuerId);
+                model.Receiver = GetPersonById(model.ReceiverId);
+            }
+            return model;
+        }
+        public Release GetReleaseWithItemsById(int id)
+        {
+            var model = GetReleaseWithoutItemsById(id);
+
+            if(model != null)
+                model.ReleaseItems = GetReleaseItemsByReleaseId(id);
+
+            return model;
+        }
+        public List<Release> GetAllReleasesWithItems()
+        {
+            var models = _db.Releases.ToList();
+
+            foreach(var m in models)
+            {
+                m.ReleaseItems = GetReleaseItemsByReleaseId(m.Id);
+                m.Issuer = GetPersonById(m.IssuerId);
+            }
+
+            return models;
+        }
+        #endregion Release
+        #region ReleaseItem
+        public ReleaseItem GetReleaseItem(int releaseId, int orderItemId)
+        {
+            var model = _db.ReleaseItems
+                .Where(i => i.ReleaseId == releaseId)
+                .Where(i => i.OrderItemId == orderItemId)
+                .FirstOrDefault();
+
+            return model;
+        }
+        public List<ReleaseItem> GetReleaseItemsByReleaseId(int releaseId)
+        {
+            var models = _db.ReleaseItems
+                .Where(i => i.ReleaseId == releaseId)
+                .ToList();
+
+            return models;
+        }
+        #endregion ReleaseItem
+        #region VirtualOrder
+        public bool DeleteVirtualOrderById(int id)
+        {
+            VirtualOrder virtualOrderModel = GetVirtualOrderById(id);
+            if (virtualOrderModel == null)
+                return false;
+            _db.VirtualOrders.Remove(virtualOrderModel);
+            _db.SaveChanges();
+            return true;
+        }
+        public List<VirtualOrder> GetAllVirtualOrdersWithItems()
+        {
+            List < VirtualOrder > vOrders = _db.VirtualOrders.ToList();
             List<int> ids = new();
 
             if (vOrders == null)
-                return new List<VirtualOrderModel>();
+                return new List<VirtualOrder>();
             foreach(var vOrder in vOrders)
             {
                 List<VirtualManyToMany> many = _db.ManyToMany.Where(m => m.VirtualOrderId == vOrder.Id).ToList();
@@ -422,11 +471,20 @@ namespace Magazyn_API.Data
 
             return vOrders;
         }
-        public VirtualOrderModel GetVirtualOrderById(int id)
+        public VirtualOrder GetVirtualOrderById(int id)
         {
-            VirtualOrderModel model = _db.VirtualOrders.FirstOrDefault(v => v.Id == id);
+            VirtualOrder model = _db.VirtualOrders.FirstOrDefault(v => v.Id == id);
+
+            return model;
+        }
+        public VirtualOrder GetVirtualOrderWithItemsById(int id)
+        {
+            VirtualOrder model = _db.VirtualOrders.FirstOrDefault(v => v.Id == id);
             if (model == null)
-                model = new VirtualOrderModel();
+                model = new VirtualOrder();
+
+            model.OrderItems = GetVirtualItemsByVitrualOrderId(id);
+            model.Orders = GetOrdersByVirtualOrderId(id);
             return model;
         }
         #endregion VirtualOrder

@@ -4,14 +4,16 @@ using Magazyn_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Magazyn_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220107102526_date")]
+    partial class date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,6 +200,15 @@ namespace Magazyn_API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("IssuerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ReceiverId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -209,6 +220,10 @@ namespace Magazyn_API.Migrations
                     b.HasIndex("ConfirmedById");
 
                     b.HasIndex("DeviceId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("ReceiverId1");
 
                     b.ToTable("Orders");
                 });
@@ -523,9 +538,21 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Issuer")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId1");
+
                     b.Navigation("ConfirmedBy");
 
                     b.Navigation("Device");
+
+                    b.Navigation("Issuer");
+
+                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Release", b =>

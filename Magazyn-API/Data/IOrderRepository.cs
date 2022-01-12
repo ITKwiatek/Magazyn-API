@@ -1,4 +1,5 @@
-﻿using Magazyn_API.Model.Order;
+﻿using Magazyn_API.Model.Auth;
+using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,20 +40,30 @@ namespace Magazyn_API.Data
 
         #region Item
         public OrderItem GetItemById(int id);
+        public List<OrderItem> GetItemsByOrderId(int orderId);
         public bool UpdateItem(OrderItem item);
         public bool SaveItem(OrderItem item);
         #endregion Item
-        public List<OrderItem> GetItemsByOrderId(int orderId);
 
         #region Project
         public Project GetProjectByName(string name);
         #endregion Project
         #region Person
-        public Person GetPersonById(int id);
+        public ApplicationUser GetPersonById(string id);
         #endregion Person
+        #region Release
+        public Release GetReleaseWithoutItemsById(int id);
+        public Release GetReleaseWithItemsById(int id);
+        public List<Release> GetAllReleasesWithItems();
+        #endregion Release
+        #region ReleaseItem
+        public List<ReleaseItem> GetReleaseItemsByReleaseId(int releaseId);
+        #endregion ReleaseItem
         #region VirtualOrder
-        public List<VirtualOrderModel> GetAllVirtualOrdersWithItems();
-        public VirtualOrderModel GetVirtualOrderById(int id);
+        public bool DeleteVirtualOrderById(int id);
+        public List<VirtualOrder> GetAllVirtualOrdersWithItems();
+        public VirtualOrder GetVirtualOrderWithItemsById(int id);
+        public VirtualOrder GetVirtualOrderById(int id);
         #endregion VirtualOrder
         #region VirtualItems
         public VirtualItem GetVirtualItemById(int id);

@@ -22,6 +22,5 @@ namespace Magazyn_API.Model.Order
         public string SAP { get; set; }
         [MaxLength(100)]
         public string Description { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace Magazyn_API.Model.Order.FrontendDto
         public string DeviceName { get; set; }
         public DateTime DateToWarehouse { get; set; }
         public DateTime DateToRelease { get; set; }
-        public PersonInfo? Receiver { get; set; }
         public int ItemsCount { get; set; }
         public int FinishedItemsCount { get; set; }
         public OrderState State { get; set; }

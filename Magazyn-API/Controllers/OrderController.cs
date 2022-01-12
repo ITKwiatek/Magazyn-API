@@ -2,6 +2,7 @@
 using Magazyn_API.Mappers;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
 {
-    [EnableCors("MyPolicy")]
+    //[EnableCors("MyPolicy")]
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly IOrderRepository _repo;
@@ -32,6 +34,8 @@ namespace Magazyn_API.Controllers
         public async Task<IActionResult> GetOrder([FromRoute] int id)
         {
             OrderModel order = _repo.GetOrderWithItemsById(id);
+            if (order == null)
+                return BadRequest("Nie znaleziono");
 
             FrontendMapper fMapper = new(_repo);
 

@@ -8,9 +8,8 @@ namespace Magazyn_API.Model.Order.FrontendDto
     public class OrderModelFrontendDto
     {
         public int Id { get; set; }
-        public Device Device { get; set; }
+        public DeviceFrontendDto Device { get; set; }
         public PersonInfo? ConfirmedBy { get; set; }
-        public PersonInfo? Issuer { get; set; }
         public DateTime DateToWarehouse { get; set; }
         public DateTime DateToRelease { get; set; }
         public List<OrderItemFrontendDto> Items { get; set; } = new List<OrderItemFrontendDto>();

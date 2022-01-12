@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
@@ -26,6 +27,13 @@ namespace Magazyn_API.Controllers
             _db = db;
             _repo = repo;
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrderById([FromRoute] int id)
+        {
+            bool ret = _repo.DeleteVirtualOrderById(id);
+
+            return Json(ret);
+        }
         [HttpPost("")]
         public async Task<bool> CreateVirtualOrder(JObject data)
         {
@@ -36,7 +44,7 @@ namespace Magazyn_API.Controllers
             orderIds = data["orderIds"].ToObject<List<int>>();
 
             FrontendMapper fMapper = new(_repo);
-            VirtualOrderModel model = new();
+            VirtualOrder model = new();
             List<OrderModel> orders = new();
             List<VirtualItem> vItems = new();
             model.Name = name;
@@ -59,9 +67,11 @@ namespace Magazyn_API.Controllers
                     } else
                     {
                         VirtualItem vItem = new();
+                        vItem.RequiredQuantity = item.RequiredQuantity - item.CurrentQuantity;
+                        if (vItem.RequiredQuantity < 1)
+                            continue;
                         vItem.Component = item.Component;
                         vItem.ComponentId = item.ComponentId;
-                        vItem.RequiredQuantity = item.RequiredQuantity - item.CurrentQuantity;
                         vItem.VirtualOrder = model;
 
                         vItems.Add(vItem);
@@ -84,18 +94,22 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<VirtualOrderFrontendDto> GetVirtualOrder([FromBody] int id)
+        [RequestFormLimits(ValueCountLimit = int.MaxValue)]
+        public async Task<VirtualOrderFrontendDto> GetVirtualOrder([FromRoute] int id)
         {
+            VirtualOrder order = _repo.GetVirtualOrderWithItemsById(id);
 
-            return new VirtualOrderFrontendDto();
+            FrontendMapper fMapper = new(_repo);
+            VirtualOrderFrontendDto dto = fMapper.VirtualOrderFrontendDto(order);
+            return dto;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetVirtualOrders()
         {
-            List<VirtualOrderModel> orders = _repo.GetAllVirtualOrdersWithItems();
+            List<VirtualOrder> orders = _repo.GetAllVirtualOrdersWithItems();
             FrontendMapper fMapper = new(_repo);
-            List<VirtualOrderCard> dtos = fMapper.VirtualOrdersCards(orders);
+            IEnumerable<VirtualOrderCard> dtos = fMapper.VirtualOrdersCards(orders);
             return Json(dtos);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Magazyn_API.Data;
+using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
 using System;
@@ -24,7 +25,6 @@ namespace Magazyn_API.Mappers
             card.DateToWarehouse = order.DateToWarehouse;
             card.DeviceName = order.Device.Name;
             card.Id = order.Id;
-            card.Receiver = PersonInfo(order.Receiver);
             card.State = order.State;
             card.FinishedItemsCount = getFinishedCount();
             card.ItemsCount = order.OrderItems.Count;
@@ -52,18 +52,37 @@ namespace Magazyn_API.Mappers
             return cards;
         }
 
-        public PersonInfo PersonInfo(Person person)
+        public PersonInfo PersonInfo(ApplicationUser person)
         {
             if (person == null)
                 return new PersonInfo();
 
             var info = new PersonInfo();
             info.Id = person.Id;
-            info.Name = person.Name;
+            info.FirstName = person.FirstName;
             info.Surname = person.Surname;
             return info;
         }
         #region Original --> FrontendDto
+        #region Device
+        public DeviceFrontendDto DeviceFrontendDto(Device model)
+        {
+            DeviceFrontendDto dto = new();
+            dto.Id = model.Id;
+            dto.Name = model.Name;
+            dto.Project = ProjectFrontendDto(model.Project);
+
+            return dto;
+        }
+
+        public ProjectFrontendDto ProjectFrontendDto(Project model)
+        {
+            ProjectFrontendDto dto = new();
+            dto.Id = model.Id;
+            dto.Name = model.Name;
+            return dto;
+        }
+        #endregion Device
         public OrderModelFrontendDto OrderModelFrontendDto(OrderModel order)
         {
             OrderModelFrontendDto dto = new();
@@ -71,9 +90,8 @@ namespace Magazyn_API.Mappers
             dto.ConfirmedBy = PersonInfo(order.ConfirmedBy);
             dto.DateToRelease = order.DateToRelease;
             dto.DateToWarehouse = order.DateToWarehouse;
-            dto.Device = order.Device;
+            dto.Device = DeviceFrontendDto(order.Device);
             dto.IsActive = order.IsActive;
-            dto.Issuer = PersonInfo(order.Issuer);
             dto.Items = ItemsDto(order.OrderItems);
             dto.State = order.State;
 
@@ -101,8 +119,76 @@ namespace Magazyn_API.Mappers
             dto.RequiredQuantity = orderItem.RequiredQuantity;
             return dto;
         }
+        #region Release
+        public ReleaseFrontendDto ReleaseFrontendDto(Release model)
+        {
+            ReleaseFrontendDto dto = new();
+
+            if (model != null)
+            {
+                dto.Device = DeviceFrontendDto(_repo.GetOrderWithItemsById(model.OrderId).Device);
+                dto.Id = model.Id;
+                dto.Issuer = PersonInfo(model.Issuer);
+                dto.OrderId = model.OrderId;
+                dto.ReleasedDate = model.ReleasedDate;
+                dto.ReleaseItems = ReleaseItemsFrontendDtos(model.ReleaseItems);
+            }
+            return dto;
+        }
+        public ReleaseCardFrontendDto ReleaseCardFrontendDto(Release model)
+        {
+            ReleaseCardFrontendDto dto = new();
+            dto.Id = model.Id;
+            dto.Issuer = PersonInfo(model.Issuer);
+            dto.OrderId = model.OrderId;
+            dto.ReleasedComponentsCount = ComponentCount(model.ReleaseItems);
+            dto.ReleasedDate = model.ReleasedDate;
+            dto.ReleasedItemsCount = model.ReleaseItems.Count;
+
+            return dto;
+
+            int ComponentCount(List<ReleaseItem> items)
+            {
+                int count = 0;
+                foreach(var i in items)
+                {
+                    count += i.Quantity;
+                }
+                return count;
+            }
+        }
+        public List<ReleaseCardFrontendDto> ReleaseCardsFrontendDto(List<Release> models)
+        {
+            List<ReleaseCardFrontendDto> dtos = new();
+            foreach(var m in models)
+            {
+                dtos.Add(ReleaseCardFrontendDto(m));
+            }
+            return dtos;
+        }
+
+        public List<ReleaseItemFrontendDto> ReleaseItemsFrontendDtos(List<ReleaseItem> models)
+        {
+            List<ReleaseItemFrontendDto> dtos = new();
+            foreach(var m in models)
+            {
+                dtos.Add(ReleaseItemFrontendDto(m));
+            }
+            return dtos;
+        }
+
+        public ReleaseItemFrontendDto ReleaseItemFrontendDto(ReleaseItem model)
+        {
+            ReleaseItemFrontendDto dto = new();
+            dto.OrderItem = ItemDto(model.OrderItem);
+            dto.Quantity = model.Quantity;
+            dto.ReleaseId = model.ReleaseId;
+
+            return dto;
+        }
+        #endregion Release
         #region Virtual
-        public List<VirtualOrderCard> VirtualOrdersCards(List<VirtualOrderModel> models)
+        public List<VirtualOrderCard> VirtualOrdersCards(List<VirtualOrder> models)
         {
             List<VirtualOrderCard> dtos = new();
             foreach(var model in models)
@@ -112,7 +198,7 @@ namespace Magazyn_API.Mappers
 
             return dtos;
         }
-        public VirtualOrderCard VirtualOrderCard(VirtualOrderModel model)
+        public VirtualOrderCard VirtualOrderCard(VirtualOrder model)
         {
             VirtualOrderCard dto = new();
             dto.CreatedBy = PersonInfo(model.CreatedBy);
@@ -133,7 +219,7 @@ namespace Magazyn_API.Mappers
 
         //    return dtos;
         //}
-        public VirtualOrderFrontendDto VirtualOrderFrontendDto(VirtualOrderModel model)
+        public VirtualOrderFrontendDto VirtualOrderFrontendDto(VirtualOrder model)
         {
             VirtualOrderFrontendDto dto = new();
             dto.CreatedBy = model.CreatedBy;
@@ -184,7 +270,6 @@ namespace Magazyn_API.Mappers
             order.DateToRelease = orderDto.DateToRelease;
             order.DateToWarehouse = orderDto.DateToWarehouse;
             order.IsActive = orderDto.IsActive;
-            order.Issuer = Person(orderDto.Issuer);
             order.OrderItems = OrderItems(orderDto.Items);
             order.State = orderDto.State;
             return order;
@@ -209,9 +294,9 @@ namespace Magazyn_API.Mappers
             return item;
         }
 
-        public Person Person(PersonInfo personInfo)
+        public ApplicationUser Person(PersonInfo personInfo)
         {
-            Person person = new Person();
+            ApplicationUser person = new ApplicationUser();
             person = _repo.GetPersonById(person.Id);
             return person;
         }

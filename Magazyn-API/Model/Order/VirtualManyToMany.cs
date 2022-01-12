@@ -13,6 +13,6 @@ namespace Magazyn_API.Model.Order
         [Key]
         public int VirtualOrderId { get; set; }
         public OrderModel Order { get; set; }
-        public VirtualOrderModel VirtualOrder { get; set; }
+        public VirtualOrder VirtualOrder { get; set; }
     }
 }
