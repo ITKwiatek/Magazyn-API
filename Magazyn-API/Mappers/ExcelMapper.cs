@@ -29,11 +29,24 @@ namespace Magazyn_API.AutoMapper
                 project = new Project(eOrder.ProjectName);
             }
 
-            var device = _db.Devices.Where(d => d.Name == eOrder.DeviceName).FirstOrDefault();
+            var group = _db.Groups
+                .Where(g => g.Name == eOrder.GroupName)
+                .Where(g => g.Project.Name == project.Name)
+                .FirstOrDefault();
+            if(group == null)
+            {
+                group = new GroupModel() { Name = eOrder.GroupName, Project = project };
+            }
+
+            var device = _db.Devices
+                .Where(d => d.Name == eOrder.DeviceName)
+                .Where(d => d.Group.Name == eOrder.GroupName)
+                .Where(d => d.Group.Project.Name == eOrder.ProjectName)
+                .FirstOrDefault();
             if (device == null)
             {
                 device = new Device(eOrder.DeviceName);
-                device.Project = project;
+                device.Group = group;
             }
             order.Device = device;
 

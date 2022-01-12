@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Magazyn_API.Model.Excel.GR_1
+namespace Magazyn_API.Model.Excel.GER_2
 {
-    public class ExcelOrderGER_1 : IExcelOrder, ITypeGER_1
+    public class ExcelOrderGER_2 : IExcelOrder
     {
         public string ProjectName { get; set; }
         public string DeviceName { get; set; }
+        public string GroupName { get; set; }
         public List<IExcelOrderItem> OrderItems { get; set; }
         public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }

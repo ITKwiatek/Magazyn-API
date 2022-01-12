@@ -47,24 +47,6 @@ namespace Magazyn_API.Controllers
             _eviroment = environment;
             _userManager = userManager;
         }
-        //[HttpPost("")]
-        //public async Task<IActionResult> Read([FromBody]JObject data)
-        //{
-        //    string path = data["path"].ToString();
-        //    ExcelTypes excelType = data["excelType"].ToObject<ExcelTypes>();     
-        //    try
-        //    {
-        //        ExcelReader reader = new ExcelReader(path);
-        //        IExcelOrder excelOrder = await reader.LoadOrder(excelType);
-        //        FromExcelMapper myMapper = new FromExcelMapper(_mapper);
-        //        OrderModelFromExcelDto order = myMapper.Order(excelOrder);
-
-        //        return Json(order);
-        //    } catch(Exception e)
-        //    {
-        //        return Json(e.Message);
-        //    }
-        //}
 
         [HttpPost("Read/{excelType}")]
         public async Task<IActionResult> ReadExcel(IFormFile file, [FromRoute] ExcelTypes excelType)

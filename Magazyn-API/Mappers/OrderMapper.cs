@@ -20,7 +20,7 @@ namespace Magazyn_API.Mappers
         public OrderModel Order(OrderModelFromExcelDto orderDto)
         {
             OrderModel order = new();
-            order.Device = Device(orderDto.DeviceName, orderDto.ProjectName);
+            order.Device = Device(orderDto.DeviceName, orderDto.GroupName, orderDto.ProjectName);
             foreach(var itemDto in orderDto.OrderItems)
             {
                 OrderItem item = new();
@@ -48,13 +48,22 @@ namespace Magazyn_API.Mappers
                 return _repo.GetComponent(componentDto);
         }
 
-        public Device Device(string deviceName, string projectName)
+        public Device Device(string deviceName, string groupName, string projectName)
         {
-            var dev = _repo.GetDeviceByNameAndProjectName(deviceName, projectName);
+            var dev = _repo.GetOrCreateDeviceByNameGroupNameAndProjectName(deviceName, groupName, projectName);
             if (dev == null)
                 dev = new(deviceName);
-            dev.Project = Project(projectName);
+            dev.Group = GroupModel(groupName, projectName);
             return dev;
+        }
+
+        public GroupModel GroupModel(string groupName, string projectName)
+        {
+            var group = _repo.GetGroupByNameAndProjectName(groupName, projectName);
+            if (group == null)
+                group = new GroupModel() { Name = groupName, Project = Project(projectName) };
+
+            return group;
         }
 
         public Project Project(string projectName)

@@ -21,6 +21,6 @@ namespace Magazyn_API.Model.Order
         [MaxLength(30)]
         public string Name { get; set; }
         public int Number { get; set; }
-        public List<Device> Devices { get; set; }
+        public List<GroupModel> Groups { get; set; }
     }
 }

@@ -66,16 +66,28 @@ namespace Magazyn_API.Data
         #region Device
         public bool ExistsInDb(Device device)
         {
-            var dev = GetDeviceByNameAndProjectName(device.Name, device.Project.Name);
+            var dev = GetDeviceByNameGroupNameAndProjectName(device.Name, device.Group.Name, device.Group.Project.Name);
             return dev != null;
+        }
+
+        public Device CreateDevice(string name, GroupModel group)
+        {
+            var device = GetDeviceByNameGroupNameAndProjectName(name, group.Name, group.Project.Name);
+            if(device == null)
+            {
+                device = new Device() { Name = name, Group = group };
+                _db.SaveChanges();
+            }
+            return device;
         }
 
         public Device GetDevice(Device device)
         {
-            var proj = GetProjectByName(device.Project.Name);
+            var proj = GetProjectByName(device.Group.Project.Name);
             var dev = _db.Devices
                 .Where(d => d.Name == device.Name)
-                .Where(d => d.Project == proj)
+                .Where(d => d.Group.Name == device.Group.Name)
+                .Where(d => d.Group.Project == proj)
                 .FirstOrDefault();
             return dev;
         }
@@ -83,17 +95,33 @@ namespace Magazyn_API.Data
         public Device GetDeviceById(int id)
         {
             var dev = _db.Devices.Where(d => d.Id == id).FirstOrDefault();
-            dev.Project = GetProjectById(dev.ProjectId);
+            dev.Group = GetGroupById(dev.GroupId);
             return dev;
         }
 
-        public Device GetDeviceByNameAndProjectName(string name, string projectName)
+        public Device GetDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName)
         {
-            var proj = GetProjectByName(projectName);
             var dev = _db.Devices
                 .Where(d => d.Name == name)
-                .Where(d => d.Project == proj)
+                .Where(d => d.Group.Name == groupName)
+                .Where(d => d.Group.Project.Name == projectName)
                 .FirstOrDefault();
+
+            return dev;
+        }
+
+        public Device GetOrCreateDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName)
+        {
+            var proj = GetProjectByName(projectName);
+            if (proj == null)
+                proj = CreateProject(projectName);
+            var gr = GetGroupByNameAndProjectName(groupName, projectName);
+            if (gr == null)
+                gr = CreateGroup(groupName, proj);
+            var dev = GetDeviceByNameGroupNameAndProjectName(name, groupName, projectName);
+            if (dev == null)
+                dev = CreateDevice(name, gr);
+
             return dev;
         }
 
@@ -108,6 +136,34 @@ namespace Magazyn_API.Data
             return false;
         }
         #endregion Device
+        #region Group
+        public GroupModel CreateGroup(string name, Project project)
+        {
+            var group = GetGroupByNameAndProjectName(name, project.Name);
+            if (group == null)
+            {
+                group = new GroupModel() { Name = name, Project = project };
+                _db.SaveChanges();
+            }
+                
+            return group;
+        }
+        public GroupModel GetGroupById(int id)
+        {
+            var gr = _db.Groups.Where(d => d.Id == id).FirstOrDefault();
+            gr.Project = GetProjectById(gr.ProjectId);
+            return gr;
+        }
+        public GroupModel GetGroupByNameAndProjectName(string name, string projectName)
+        {
+            var ret = _db.Groups
+                .Where(g => g.Name == name)
+                .Where(g => g.Project.Name == projectName)
+                .FirstOrDefault();
+
+            return ret;
+        }
+        #endregion Group
         #region Order
         public bool ExistsOrderById(int Id)
         {
@@ -368,6 +424,16 @@ namespace Magazyn_API.Data
         }
         #endregion OrderItem
         #region Project
+        public Project CreateProject(string name)
+        {
+            var project = GetProjectByName(name);
+            if (project == null)
+            {
+                project = new() { Name = name };
+                _db.SaveChanges();
+            }
+            return project;
+        }
         public Project GetProjectById(int id)
         {
             var project = _db.Projects.Where(p => p.Id == id).FirstOrDefault();
@@ -417,6 +483,7 @@ namespace Magazyn_API.Data
             {
                 m.ReleaseItems = GetReleaseItemsByReleaseId(m.Id);
                 m.Issuer = GetPersonById(m.IssuerId);
+                m.Order = GetOrderWithoutItemsById(m.OrderId);
             }
 
             return models;

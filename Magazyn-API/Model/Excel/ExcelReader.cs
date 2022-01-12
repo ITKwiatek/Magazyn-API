@@ -81,8 +81,31 @@ namespace Magazyn_API.Model.Excel
 
             void LoadOrderInfo()
             {
-                excelOrder.ProjectName = getCell(excelOrder.ProjectNameCell);
+                separateProjectAndGroup();
                 excelOrder.DeviceName = getCell(excelOrder.DeviceNameCell);
+
+                void separateProjectAndGroup()
+                {
+                    string both = getCell(excelOrder.ProjectNameCell);
+                    if (string.IsNullOrWhiteSpace(both))
+                        return;
+                    string groupNameTemp = both.Remove(0, 5);
+                    int groupNamePosition = 0;
+                    for(int i=5; i<both.Length; i++)
+                    {
+                        groupNamePosition = i;
+                        if (Char.IsLetter(both[groupNamePosition]))
+                            break;
+                    }
+                    int length = both.Length - groupNamePosition;
+                    string groupName = both.Substring(groupNamePosition, both.Length - groupNamePosition);
+
+                    int indexOfGroupName = both.IndexOf(groupName);
+                    string projectName = both.Remove(indexOfGroupName - 1, groupName.Length+1);
+
+                    excelOrder.GroupName = groupName;
+                    excelOrder.ProjectName = projectName;
+                }
             }
 
             void LoadDates()

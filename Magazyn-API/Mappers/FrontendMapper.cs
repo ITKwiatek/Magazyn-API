@@ -24,6 +24,8 @@ namespace Magazyn_API.Mappers
             card.DateToRelease = order.DateToRelease;
             card.DateToWarehouse = order.DateToWarehouse;
             card.DeviceName = order.Device.Name;
+            card.GroupName = order.Device.Group.Name;
+            card.ProjectName = order.Device.Group.Project.Name;
             card.Id = order.Id;
             card.State = order.State;
             card.FinishedItemsCount = getFinishedCount();
@@ -70,19 +72,24 @@ namespace Magazyn_API.Mappers
             DeviceFrontendDto dto = new();
             dto.Id = model.Id;
             dto.Name = model.Name;
+            dto.Group = GroupFrontendDto(model.Group);
+
+            return dto;
+        }
+
+
+        #endregion Device
+        #region Group
+        public GroupFrontendDto GroupFrontendDto(GroupModel model)
+        {
+            GroupFrontendDto dto = new();
+            dto.Id = model.Id;
+            dto.Name = model.Name;
             dto.Project = ProjectFrontendDto(model.Project);
 
             return dto;
         }
-
-        public ProjectFrontendDto ProjectFrontendDto(Project model)
-        {
-            ProjectFrontendDto dto = new();
-            dto.Id = model.Id;
-            dto.Name = model.Name;
-            return dto;
-        }
-        #endregion Device
+        #endregion Group
         public OrderModelFrontendDto OrderModelFrontendDto(OrderModel order)
         {
             OrderModelFrontendDto dto = new();
@@ -119,6 +126,15 @@ namespace Magazyn_API.Mappers
             dto.RequiredQuantity = orderItem.RequiredQuantity;
             return dto;
         }
+        #region Project
+        public ProjectFrontendDto ProjectFrontendDto(Project model)
+        {
+            ProjectFrontendDto dto = new();
+            dto.Id = model.Id;
+            dto.Name = model.Name;
+            return dto;
+        }
+        #endregion
         #region Release
         public ReleaseFrontendDto ReleaseFrontendDto(Release model)
         {
@@ -140,6 +156,9 @@ namespace Magazyn_API.Mappers
             ReleaseCardFrontendDto dto = new();
             dto.Id = model.Id;
             dto.Issuer = PersonInfo(model.Issuer);
+            dto.DeviceName = model.Order.Device.Name;
+            dto.GroupName = model.Order.Device.Group.Name;
+            dto.ProjectName = model.Order.Device.Group.Project.Name;
             dto.OrderId = model.OrderId;
             dto.ReleasedComponentsCount = ComponentCount(model.ReleaseItems);
             dto.ReleasedDate = model.ReleasedDate;

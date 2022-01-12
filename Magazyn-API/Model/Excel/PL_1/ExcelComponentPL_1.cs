@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Excel
 {
-    public class ExcelComponentPL_1 : IExcelComponent, ITypePL_1
+    public class ExcelComponentPL_1 : IExcelComponent
     {
         public string SAP { get; set; }
         public string Supplier { get; set; }
