@@ -19,6 +19,79 @@ namespace Magazyn_API.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Magazyn_API.Model.Auth.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers");
+                });
+
             modelBuilder.Entity("Magazyn_API.Model.Order.ComponentModel", b =>
                 {
                     b.Property<int>("Id")
@@ -107,13 +180,13 @@ namespace Magazyn_API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ConfirmedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateRelease")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ConfirmedById")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("DateToEP")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateToRelease")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateToWarehouse")
@@ -122,11 +195,11 @@ namespace Magazyn_API.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IssuerId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                    b.Property<int?>("ReceiverId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -137,31 +210,7 @@ namespace Magazyn_API.Migrations
 
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("IssuerId");
-
-                    b.HasIndex("ReceiverId");
-
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.Person", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Surname")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Project", b =>
@@ -190,19 +239,23 @@ namespace Magazyn_API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("IssuerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReceiveDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("ReleasedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("IssuerId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ReceiverId");
 
@@ -217,15 +270,84 @@ namespace Magazyn_API.Migrations
                     b.Property<int>("OrderItemId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("OrderItemId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ReleaseId", "OrderItemId");
 
-                    b.HasIndex("OrderItemId")
-                        .IsUnique();
+                    b.HasIndex("OrderItemId");
+
+                    b.HasIndex("OrderItemId1")
+                        .IsUnique()
+                        .HasFilter("[OrderItemId1] IS NOT NULL");
 
                     b.ToTable("ReleaseItems");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequiredQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VirtualOrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("VirtualOrderId");
+
+                    b.ToTable("VirtualItems");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualManyToMany", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VirtualOrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId", "VirtualOrderId");
+
+                    b.HasIndex("VirtualOrderId");
+
+                    b.ToTable("ManyToMany");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("VirtualOrders");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -277,71 +399,6 @@ namespace Magazyn_API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -438,7 +495,7 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.OrderItem", b =>
                 {
                     b.HasOne("Magazyn_API.Model.Order.ComponentModel", "Component")
-                        .WithMany("OrderItems")
+                        .WithMany()
                         .HasForeignKey("ComponentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -456,8 +513,8 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Magazyn_API.Model.Order.OrderModel", b =>
                 {
-                    b.HasOne("Magazyn_API.Model.Order.Person", "ConfirmedBy")
-                        .WithMany("OrderConfirmings")
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "ConfirmedBy")
+                        .WithMany()
                         .HasForeignKey("ConfirmedById");
 
                     b.HasOne("Magazyn_API.Model.Order.Device", "Device")
@@ -466,36 +523,29 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Order.Person", "Issuer")
-                        .WithMany("OrderIssuers")
-                        .HasForeignKey("IssuerId");
-
-                    b.HasOne("Magazyn_API.Model.Order.Person", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
                     b.Navigation("ConfirmedBy");
 
                     b.Navigation("Device");
-
-                    b.Navigation("Issuer");
-
-                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Release", b =>
                 {
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Issuer")
+                        .WithMany()
+                        .HasForeignKey("IssuerId");
+
                     b.HasOne("Magazyn_API.Model.Order.OrderModel", "Order")
-                        .WithOne()
-                        .HasForeignKey("Magazyn_API.Model.Order.Release", "OrderId")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Magazyn_API.Model.Order.Person", "Receiver")
-                        .WithMany("ReleaseReceivers")
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "Receiver")
+                        .WithMany()
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Issuer");
 
                     b.Navigation("Order");
 
@@ -505,10 +555,14 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.ReleaseItem", b =>
                 {
                     b.HasOne("Magazyn_API.Model.Order.OrderItem", "OrderItem")
-                        .WithOne("ReleaseItem")
-                        .HasForeignKey("Magazyn_API.Model.Order.ReleaseItem", "OrderItemId")
+                        .WithMany()
+                        .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Magazyn_API.Model.Order.OrderItem", null)
+                        .WithOne("ReleaseItem")
+                        .HasForeignKey("Magazyn_API.Model.Order.ReleaseItem", "OrderItemId1");
 
                     b.HasOne("Magazyn_API.Model.Order.Release", "Release")
                         .WithMany("ReleaseItems")
@@ -519,6 +573,53 @@ namespace Magazyn_API.Migrations
                     b.Navigation("OrderItem");
 
                     b.Navigation("Release");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualItem", b =>
+                {
+                    b.HasOne("Magazyn_API.Model.Order.ComponentModel", "Component")
+                        .WithMany()
+                        .HasForeignKey("ComponentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Magazyn_API.Model.Order.VirtualOrder", "VirtualOrder")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("VirtualOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Component");
+
+                    b.Navigation("VirtualOrder");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualManyToMany", b =>
+                {
+                    b.HasOne("Magazyn_API.Model.Order.OrderModel", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Magazyn_API.Model.Order.VirtualOrder", "VirtualOrder")
+                        .WithMany()
+                        .HasForeignKey("VirtualOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("VirtualOrder");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrder", b =>
+                {
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -532,7 +633,7 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -541,7 +642,7 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -556,7 +657,7 @@ namespace Magazyn_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -565,16 +666,11 @@ namespace Magazyn_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Magazyn_API.Model.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Magazyn_API.Model.Order.ComponentModel", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Magazyn_API.Model.Order.Device", b =>
@@ -592,15 +688,6 @@ namespace Magazyn_API.Migrations
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Magazyn_API.Model.Order.Person", b =>
-                {
-                    b.Navigation("OrderConfirmings");
-
-                    b.Navigation("OrderIssuers");
-
-                    b.Navigation("ReleaseReceivers");
-                });
-
             modelBuilder.Entity("Magazyn_API.Model.Order.Project", b =>
                 {
                     b.Navigation("Devices");
@@ -609,6 +696,11 @@ namespace Magazyn_API.Migrations
             modelBuilder.Entity("Magazyn_API.Model.Order.Release", b =>
                 {
                     b.Navigation("ReleaseItems");
+                });
+
+            modelBuilder.Entity("Magazyn_API.Model.Order.VirtualOrder", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

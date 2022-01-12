@@ -12,7 +12,6 @@ namespace Magazyn_API.Model.Order.FromExcelDto
         public string DeviceName { get; set; }
         public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }
-        public DateTime ReleaseDate { get; set; }
         public List<OrderItemFromExcelDto> OrderItems { get; set; } = new List<OrderItemFromExcelDto>();
     }
 }

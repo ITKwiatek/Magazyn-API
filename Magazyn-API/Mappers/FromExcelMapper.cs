@@ -31,7 +31,6 @@ namespace Magazyn_API.Mappers
             OrderModelFromExcelDto order = new();
             order.DateToEP = eOrder.DateToEP;
             order.DateToWarehouse = eOrder.DateToWarehouse;
-            order.ReleaseDate = eOrder.ReleaseDate;
             order.DeviceName = eOrder.DeviceName;
             order.ProjectName = eOrder.ProjectName;
             foreach(var eI in eOrder.OrderItems)

@@ -7,7 +7,8 @@ namespace Magazyn_API.Model.Order.FrontendDto
 {
     public class PersonInfo
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
+        public string FirstName { get; set; }
         public string Surname { get; set; }
     }
 }
