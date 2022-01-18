@@ -330,12 +330,17 @@ namespace Magazyn_API.Data
             OrderModel orderDb = GetOrderWithItemsById(orderDto.Id);
             if (orderDto.DateToRelease > DateTime.MinValue)
                 orderDb.DateToRelease = orderDto.DateToRelease;
-            if (orderDto.DateToWarehouse > DateTime.MinValue)
-                orderDb.DateToWarehouse = orderDto.DateToWarehouse;
             if (!orderDb.IsActive && orderDto.IsActive)
                 orderDb.DateToWarehouse = DateTime.Now;
 
+            if (!orderDb.IsActive && orderDto.IsActive)
+                orderDto.DateToWarehouse = DateTime.Now;
             orderDb.IsActive = orderDto.IsActive;
+
+            if(orderDb.Device.Name != orderDto.Device.Name || orderDb.Device.Group.Name != orderDto.Device.Group.Name || orderDb.Device.Group.Project.Name != orderDto.Device.Group.Project.Name)
+            {
+                orderDb.Device = GetOrCreateDeviceByNameGroupNameAndProjectName(orderDto.Device.Name, orderDto.Device.Group.Name, orderDto.Device.Group.Project.Name);
+            }
 
             _db.Orders.Update(orderDb);
             _db.SaveChanges();

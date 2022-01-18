@@ -102,6 +102,10 @@ namespace Magazyn_API.Model.Excel
 
                     int indexOfGroupName = both.IndexOf(groupName);
                     string projectName = both.Remove(indexOfGroupName - 1, groupName.Length+1);
+                    if (projectName.Contains('-'))
+                        projectName = projectName.Split('-')[1].Trim();
+
+                    groupName = groupName.Split('-')[0].Trim();
 
                     excelOrder.GroupName = groupName;
                     excelOrder.ProjectName = projectName;
