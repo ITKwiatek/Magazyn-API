@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Excel.PL_1
 {
-    public class ExcelOrderPL_1 : IExcelOrderDates, ITypePL_1
+    public class ExcelOrderPL_1 : IExcelOrderDates
     {
         public string ProjectName { get; set; }
         public string DeviceName { get; set; }
+        public string GroupName { get; set; }
         public List<IExcelOrderItem> OrderItems { get; set; }
         public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }

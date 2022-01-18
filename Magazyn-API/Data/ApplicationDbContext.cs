@@ -22,6 +22,7 @@ namespace Magazyn_API.Data
         public DbSet<OrderModel> Orders { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Device> Devices { get; set; }
+        public DbSet<GroupModel> Groups { get; set; }
         public DbSet<ComponentModel> Components { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<ReleaseItem> ReleaseItems { get; set; }
@@ -55,9 +56,9 @@ namespace Magazyn_API.Data
             //Device has one Project
             //Project has many Devices
             builder.Entity<Device>()
-                .HasOne<Project>(d => d.Project)
+                .HasOne<GroupModel>(d => d.Group)
                 .WithMany(p => p.Devices)
-                .HasForeignKey(d => d.ProjectId);
+                .HasForeignKey(d => d.GroupId);
 
 
             //ReleaseItem has One OrderItem

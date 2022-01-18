@@ -10,6 +10,7 @@ namespace Magazyn_API.Model.Order.FromExcelDto
     {
         public string ProjectName { get; set; }
         public string DeviceName { get; set; }
+        public string GroupName { get; set; }
         public DateTime DateToEP { get; set; }
         public DateTime DateToWarehouse { get; set; }
         public List<OrderItemFromExcelDto> OrderItems { get; set; } = new List<OrderItemFromExcelDto>();

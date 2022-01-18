@@ -18,8 +18,8 @@ namespace Magazyn_API.Model.Order
         }
         [Key]
         public int Id { get; set; }
-        public int ProjectId { get; set; }
-        public Project Project { get; set; }
+        public int GroupId { get; set; }
+        public GroupModel Group { get; set; }
         [MaxLength(30)]
         public string Name { get; set; }
         public List<OrderModel> Orders { get; set; }

@@ -17,10 +17,13 @@ namespace Magazyn_API.Data
         #region Device
         public bool ExistsInDb(Device device);
         public Device GetDevice(Device device);
-        public Device GetDeviceByNameAndProjectName(string name, string projectName);
+        public Device GetDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName);
+        public Device GetOrCreateDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName);
         public bool SaveDevice(Device device);
         #endregion Device  
-
+        #region Group
+        public GroupModel GetGroupByNameAndProjectName(string name, string projectName);
+        #endregion Group
         #region Order
         public bool DeleteOrderById(int id);
         public List<OrderModel> GetAllOrders();

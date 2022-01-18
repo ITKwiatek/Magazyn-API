@@ -8,6 +8,7 @@ namespace Magazyn_API.Model.Excel
     public enum ExcelTypes
     {
         PL_1,
-        GER_1
+        GER_1,
+        GER_2
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Excel.GR_1
 {
-    public class ExcelOrderItemGER_1 : IExcelOrderItem, ITypeGER_1
+    public class ExcelOrderItemGER_1 : IExcelOrderItem
     {
         public IExcelComponent ExcelComponent { get; set; }
         public int Count { get; set; }

@@ -9,6 +9,8 @@ namespace Magazyn_API.Model.Order.FrontendDto
     {
         public int Id { get; set; }
         public string DeviceName { get; set; }
+        public string GroupName { get; set; }
+        public string ProjectName { get; set; }
         public DateTime DateToWarehouse { get; set; }
         public DateTime DateToRelease { get; set; }
         public int ItemsCount { get; set; }

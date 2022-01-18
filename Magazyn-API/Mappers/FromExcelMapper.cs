@@ -32,6 +32,7 @@ namespace Magazyn_API.Mappers
             order.DateToEP = eOrder.DateToEP;
             order.DateToWarehouse = eOrder.DateToWarehouse;
             order.DeviceName = eOrder.DeviceName;
+            order.GroupName = eOrder.GroupName;
             order.ProjectName = eOrder.ProjectName;
             foreach(var eI in eOrder.OrderItems)
             {

@@ -1,4 +1,5 @@
-﻿using Magazyn_API.Model.Excel.GR_1;
+﻿using Magazyn_API.Model.Excel.GER_2;
+using Magazyn_API.Model.Excel.GR_1;
 using Magazyn_API.Model.Excel.PL_1;
 using Magazyn_API.Model.Mappers;
 using System;
@@ -18,6 +19,8 @@ namespace Magazyn_API.Model.Excel
                     return new ExcelOrderPL_1();
                 case ExcelTypes.GER_1:
                     return new ExcelOrderGER_1();
+                case ExcelTypes.GER_2:
+                    return new ExcelOrderGER_2();
             }
             throw new NotImplementedException();
         }
@@ -30,6 +33,8 @@ namespace Magazyn_API.Model.Excel
                     return new ExcelComponentPL_1();
                 case ExcelTypes.GER_1:
                     return new ExcelComponentGER_1();
+                case ExcelTypes.GER_2:
+                    return new ExcelComponentGER_2();
             }
             throw new NotImplementedException();
         }
@@ -42,6 +47,8 @@ namespace Magazyn_API.Model.Excel
                     return new ExcelOrderItemPL_1();
                 case ExcelTypes.GER_1:
                     return new ExcelOrderItemGER_1();
+                case ExcelTypes.GER_2:
+                    return new ExcelOrderItemGER_2();
             }
             throw new NotImplementedException();
         }
