@@ -64,7 +64,6 @@ namespace Magazyn_API.Controllers
             FrontendMapper fMapper = new FrontendMapper(_repo);
 
             OrderModelFrontendDto orderDto = data["order"].ToObject<OrderModelFrontendDto>();
-            string receiverInfo = data["receiverInfo"].ToString();
 
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
@@ -78,7 +77,6 @@ namespace Magazyn_API.Controllers
             release.OrderId = orderDto.Id;
             release.ReleasedDate = DateTime.Now;
             release.Issuer = await _userManager.FindByEmailAsync(userEmail.ToUpperInvariant());
-            release.ReceiverInfo = receiverInfo;
 
             foreach(var item in orderDto.Items)
             {

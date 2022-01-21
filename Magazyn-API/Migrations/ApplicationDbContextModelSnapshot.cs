@@ -268,9 +268,6 @@ namespace Magazyn_API.Migrations
                     b.Property<string>("ReceiverId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ReceiverInfo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ReleasedDate")
                         .HasColumnType("datetime2");
 

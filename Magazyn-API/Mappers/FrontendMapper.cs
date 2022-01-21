@@ -148,7 +148,6 @@ namespace Magazyn_API.Mappers
                 dto.OrderId = model.OrderId;
                 dto.ReleasedDate = model.ReleasedDate;
                 dto.ReleaseItems = ReleaseItemsFrontendDtos(model.ReleaseItems);
-                dto.ReceiverInfo = model.ReceiverInfo;
             }
             return dto;
         }
@@ -164,7 +163,6 @@ namespace Magazyn_API.Mappers
             dto.ReleasedComponentsCount = ComponentCount(model.ReleaseItems);
             dto.ReleasedDate = model.ReleasedDate;
             dto.ReleasedItemsCount = model.ReleaseItems.Count;
-            dto.ReceiverInfo = model.ReceiverInfo;
 
             return dto;
 

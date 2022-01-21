@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Order.FrontendDto
 {
-    public class ReleaseCardFrontendDto : IRelease
+    public class ReleaseCardFrontendDto
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
@@ -16,6 +16,5 @@ namespace Magazyn_API.Model.Order.FrontendDto
         public int ReleasedComponentsCount { get; set; }
         public DateTime ReleasedDate { get; set; }
         public PersonInfo Issuer { get; set; }
-        public string ReceiverInfo { get ; set; }
     }
 }

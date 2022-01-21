@@ -84,7 +84,7 @@ namespace Magazyn_API
             services.AddAutoMapper(typeof(Startup));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("ServerConnection")));
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<ExcelMapper>();
             services.AddSwaggerGen(c =>
@@ -114,7 +114,7 @@ namespace Magazyn_API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -140,7 +140,7 @@ namespace Magazyn_API
             });
 
 
-            app.UseEndpoints(endpoints =>
+                    app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
