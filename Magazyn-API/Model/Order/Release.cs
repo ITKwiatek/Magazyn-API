@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Order
 {
-    public class Release
+    public class Release : IRelease
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -21,5 +21,6 @@ namespace Magazyn_API.Model.Order
         public ApplicationUser Issuer { get; set; }
         public DateTime ReleasedDate { get; set; }
         public List<ReleaseItem> ReleaseItems { get; set; } = new();
+        public string ReceiverInfo { get; set; }
     }
 }
