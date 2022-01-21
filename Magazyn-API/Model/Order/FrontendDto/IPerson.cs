@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Model.Order.FrontendDto
 {
-    public class PersonInfo : IPerson
+    public interface IPerson
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
