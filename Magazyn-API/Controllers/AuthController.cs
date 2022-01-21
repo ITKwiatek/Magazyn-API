@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
@@ -24,11 +26,13 @@ namespace Magazyn_API.Controllers
     [Route("[controller]")]
     public class AuthController : Controller
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _db;
 
-        public AuthController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public AuthController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
             _db = db;
         }
@@ -111,6 +115,9 @@ namespace Magazyn_API.Controllers
         private async Task<dynamic> GenerateToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
+
+            //await _userManager.AddToRoleAsync(user, "Manager");
+
             var roles = from ur in _db.UserRoles
                         join r in _db.Roles on ur.RoleId equals r.Id
                         where ur.UserId == user.Id
