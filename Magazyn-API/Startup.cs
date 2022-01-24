@@ -86,6 +86,7 @@ namespace Magazyn_API
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ExcelMapper>();
             services.AddSwaggerGen(c =>
             {

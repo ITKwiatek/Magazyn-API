@@ -26,10 +26,11 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Magazyn_API.Model.Auth;
+using Magazyn_API.Model.User;
 
 namespace Magazyn_API.Controllers
 {
-    [Authorize]
+    [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
     [ApiController]
     [Route("[controller]")]
     public class ExcelController : Controller
@@ -89,25 +90,6 @@ namespace Magazyn_API.Controllers
             }
             return Json("Serwer nie był w stanie wczytać pliku...");
         }
-
-        //[HttpPost("Save")]
-        //public async Task<bool> Save(OrderModelFromExcelDto orderDto)
-        //{
-        //    OrderMapper oM = new OrderMapper(_repo);
-        //    OrderModel order = oM.Order(orderDto);
-
-        //    var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-        //    IEnumerable<Claim> claim = identity.Claims;
-        //    var userEmail = claim
-        //        .Where(x => x.Type == ClaimTypes.Email)
-        //        .FirstOrDefault().Value.ToString();
-
-        //    order.ConfirmedBy = await _userManager.FindByEmailAsync(userEmail.ToUpperInvariant());
-
-        //    var response = _repo.SaveOrder(order);
-        //    return response;
-        //}
 
         [HttpGet("Add")]
         public async Task<int> Add(OrderModel order)

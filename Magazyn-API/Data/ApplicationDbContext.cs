@@ -28,10 +28,11 @@ namespace Magazyn_API.Data
         public DbSet<ReleaseItem> ReleaseItems { get; set; }
         public DbSet<Release> Releases { get; set; }
         //public DbSet<Person> Persons { get; set; }
-        //public DbSet<ApplicationUser> Users {get; set;}
+        public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<VirtualItem> VirtualItems { get; set; }
         public DbSet<VirtualOrder> VirtualOrders { get; set; }
         public DbSet<VirtualManyToMany> ManyToMany { get; set; }
+        //public DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -173,6 +174,7 @@ namespace Magazyn_API.Data
                     .WithMany().HasForeignKey(v => v.OrderId),
                     o => o.HasOne(o => o.VirtualOrder)
                     .WithMany().HasForeignKey(o => o.VirtualOrderId));
+
         }
     }
 }
