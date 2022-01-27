@@ -1,4 +1,5 @@
 ﻿using Magazyn_API.Model.Auth;
+using Magazyn_API.Model.Order.FrontendDto;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Magazyn_API.Data
         public List<ApplicationUser> GetAllUsers();
         public List<IdentityRole> GetUserRolesByUserId(string id);
         public List<IdentityRole> GetAllRoles();
+        public bool UpdateUserInfo(UserFrontendDto dto);
         public IdentityRole GetRoleByName(string name);
     }
 }

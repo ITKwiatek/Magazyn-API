@@ -43,6 +43,31 @@ namespace Magazyn_API.Controllers
 
             return users;
         }
+        [HttpPut()]
+        public async Task<bool> UpdateUserInfo([FromBody] UserFrontendDto dto)
+        {
+            bool updated = _repo.UpdateUserInfo(dto);
+
+            return updated;
+        }
+
+
+        [HttpPut("{id}/roles")]
+        public async Task<bool> UpdateUserRoles([FromRoute] string id, [FromBody] List<string> roles)
+        {
+            var user = _repo.GetUserById(id);
+            var allRoles = UserRolesAcces.GetUserRoles();
+
+            foreach (var r in allRoles)
+            {
+                if (roles.Contains(r))
+                    await _userManager.AddToRoleAsync(user, r);
+                else
+                    await _userManager.RemoveFromRoleAsync(user, r);
+            }
+
+            return true;
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
@@ -51,54 +76,11 @@ namespace Magazyn_API.Controllers
             {
                 var user = _userManager.Users.Where(u => u.Id == id).FirstOrDefault();
                 var deleted = await _userManager.DeleteAsync(user);
-                return Ok(deleted);
+                return Ok( new Response() { Message = "Usunięto", Status = "200" });
             } catch (Exception  e)
             {
                 return BadRequest(e.Message);
             }
         }
-        #region Role
-        [HttpPost("AssignRole")]
-        public async Task<IActionResult> AssignNewRoleToUser([FromBody] JObject data)
-        {
-            try
-            {
-                string userId = data["id"].ToString();
-                string userRole = data["role"].ToString();
-
-                var user = _repo.GetUserById(userId);
-                var role = _repo.GetRoleByName(userRole);
-                await _userManager.AddToRoleAsync(user, role.Name);
-
-                var dto = _userService.UserFrontendDto(user);
-
-                return Ok(dto);
-            } catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost("RemoveFromRole")]
-        public async Task<IActionResult> RemoveRoleFromUser([FromBody] JObject data)
-        {
-            try
-            {
-                string userId = data["id"].ToString();
-                string userRole = data["role"].ToString();
-
-                var user = _repo.GetUserById(userId);
-                var role = _repo.GetRoleByName(userRole);
-
-                await _userManager.RemoveFromRoleAsync(user, role.Name);
-                var dto = _userService.UserFrontendDto(user);
-
-                return Ok(dto);
-            } catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-        #endregion Role
     }
 }

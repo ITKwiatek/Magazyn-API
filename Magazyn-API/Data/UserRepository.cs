@@ -1,4 +1,5 @@
 ﻿using Magazyn_API.Model.Auth;
+using Magazyn_API.Model.Order.FrontendDto;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,18 @@ namespace Magazyn_API.Data
                 roles.Add(_db.Roles.Where(r => r.Id == rId.RoleId).FirstOrDefault());
             }
             return roles;
+        }
+
+        public bool UpdateUserInfo(UserFrontendDto dto)
+        {
+            var userDb = GetUserById(dto.Id);
+            userDb.Email = dto.Email;
+            userDb.FirstName = dto.FirstName;
+            userDb.Surname = dto.Surname;
+
+            _db.SaveChanges();
+
+            return true;
         }
     }
 }
