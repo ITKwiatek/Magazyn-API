@@ -1,8 +1,10 @@
 ﻿using Magazyn_API.Data;
 using Magazyn_API.Mappers;
+using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Excel;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Model.User;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -14,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
 {
-    [EnableCors("MyPolicy")]
     [ApiController]
     [Route("[controller]")]
+    [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
     public class VirtualController : Controller
     {
         private readonly ApplicationDbContext _db;

@@ -1,7 +1,9 @@
 ﻿using Magazyn_API.Data;
 using Magazyn_API.Mappers;
+using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Model.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +26,14 @@ namespace Magazyn_API.Controllers
         {
             _repo = repo;
         }
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
         [HttpDelete("{id}")]
         public async Task<bool> DeleteOrder([FromRoute]int id)
         {
             _repo.DeleteOrderById(id);
             return true;
         }
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] int id)
         {
@@ -44,6 +48,7 @@ namespace Magazyn_API.Controllers
             return Json(dto);
         }
         [HttpGet("active")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         public async Task<IActionResult> GetActiveOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -54,6 +59,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("inactive")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
         public async Task<IActionResult> GetInActiveOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -64,6 +70,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("new")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         public async Task<IActionResult> GetNewOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -74,6 +81,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("finished")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         public async Task<IActionResult> GetFinishedOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -84,6 +92,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("unfinished")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         public async Task<IActionResult> GetUnfinishedOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -94,6 +103,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpPut("details")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
         public async Task<IActionResult> UpdateOrderDetails([FromBody] OrderModelFrontendDto orderDto)
         {
             return Json(_repo.UpdateOrderDetails(orderDto));

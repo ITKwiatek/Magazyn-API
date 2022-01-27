@@ -2,6 +2,7 @@
 using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Service;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,6 +18,10 @@ namespace Magazyn_API.Mappers
         public FrontendMapper(IOrderRepository repo)
         {
             _repo = repo;
+        }
+        public FrontendMapper()
+        {
+
         }
         public OrderCard OrderCard(OrderModel order)
         {

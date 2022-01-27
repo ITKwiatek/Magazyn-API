@@ -4,6 +4,7 @@ using Magazyn_API.Mappers;
 using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Model.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -17,9 +18,10 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
+    [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper, UserRoles.Manager, UserRoles.Designer)]
     public class ReleaseController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

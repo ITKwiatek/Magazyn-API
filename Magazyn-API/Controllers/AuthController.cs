@@ -151,16 +151,6 @@ namespace Magazyn_API.Controllers
 
             return output;
         }
-        #region Logout
-        //[HttpGet("/deleteTokens")]
-        //public async Task<bool> DeleteTokensByIp()
-        //{
-        //    string remoteIpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        //    MongoOwnClient mongo = MongoOwnClient.GetInstance();
-        //    await mongo.DeleteTokensWithThisIpAsync(remoteIpAddress);
-        //    return true;
-        //}
-        #endregion Logout
         #endregion Token
     }
 }
