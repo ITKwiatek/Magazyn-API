@@ -33,7 +33,7 @@ namespace Magazyn_API.Controllers
             _repo.DeleteOrderById(id);
             return true;
         }
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin,UserRoles.Manager, UserRoles.Storekeeper)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] int id)
         {

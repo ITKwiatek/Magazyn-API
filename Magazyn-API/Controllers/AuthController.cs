@@ -1,5 +1,4 @@
-﻿using AutoMapper.Configuration;
-using Magazyn_API.Data;
+﻿using Magazyn_API.Data;
 using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Microsoft.AspNetCore.Authorization;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
@@ -41,6 +38,8 @@ namespace Magazyn_API.Controllers
         [EnableCors("MyPolicy")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if(model.Password.Length < 6)
+                return BadRequest( new Response { Status = "Error", Message = "Hasło za słabe" });
             string email = model.Email.ToUpperInvariant();
             var userExists = await _userManager.FindByEmailAsync(model.Email.ToUpperInvariant());
             if (userExists != null)
@@ -91,6 +90,23 @@ namespace Magazyn_API.Controllers
         public async Task<bool> IsTokenValid()
         {
             return true;
+        }
+        [HttpPost("PasswordValid")]
+        [Authorize]
+        public async Task<bool> IsPasswordValid([FromBody] JObject data)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                string password = data["password"].ToString();
+                bool isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
+
+                return isPasswordValid;
+            }
+            return false;
         }
         [HttpPost("token")]
         [EnableCors("MyPolicy")]

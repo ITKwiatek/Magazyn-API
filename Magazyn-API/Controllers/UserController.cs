@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
@@ -43,13 +44,7 @@ namespace Magazyn_API.Controllers
 
             return users;
         }
-        [HttpPut()]
-        public async Task<bool> UpdateUserInfo([FromBody] UserFrontendDto dto)
-        {
-            bool updated = _repo.UpdateUserInfo(dto);
 
-            return updated;
-        }
 
 
         [HttpPut("{id}/roles")]
@@ -82,5 +77,24 @@ namespace Magazyn_API.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("resetPassword/{id}")]
+        public async Task<bool> ResetPassword([FromRoute] string id)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await _userManager.ResetPasswordAsync(user, token, "password123");
+
+                return result.Succeeded;
+
+            } catch (Exception e)
+            {
+                return false ;
+            }
+        }
+
+
     }
 }
