@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Magazyn_API.Controllers
 {
-    [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Manager)]
+    [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
     [ApiController]
     [Route("[controller]")]
     public class ShortageController : Controller
