@@ -1,6 +1,7 @@
 ﻿using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Model.Shortage;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,12 +17,14 @@ namespace Magazyn_API.Data
 
         #region Device
         public bool ExistsInDb(Device device);
+        public List<string> GetAllDeviceNames();
         public Device GetDevice(Device device);
         public Device GetDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName);
         public Device GetOrCreateDeviceByNameGroupNameAndProjectName(string name, string groupName, string projectName);
         public bool SaveDevice(Device device);
         #endregion Device  
         #region Group
+        public List<string> GetAllGroupNames();
         public GroupModel GetGroupByNameAndProjectName(string name, string projectName);
         #endregion Group
         #region Order
@@ -49,6 +52,7 @@ namespace Magazyn_API.Data
         #endregion Item
 
         #region Project
+        public List<string> GetAllProjectNames();
         public Project GetProjectByName(string name);
         #endregion Project
         #region Person
@@ -62,6 +66,9 @@ namespace Magazyn_API.Data
         #region ReleaseItem
         public List<ReleaseItem> GetReleaseItemsByReleaseId(int releaseId);
         #endregion ReleaseItem
+        #region Shortages
+        public List<ShortageItem> GetComponentItemsByProjectGroupAndDevice(string projectName, string groupName, string deviceName);
+        #endregion Shortages
         #region VirtualOrder
         public bool DeleteVirtualOrderById(int id);
         public List<VirtualOrder> GetAllVirtualOrdersWithItems();

@@ -1,6 +1,7 @@
 ﻿using Magazyn_API.Model.Auth;
 using Magazyn_API.Model.Order;
 using Magazyn_API.Model.Order.FrontendDto;
+using Magazyn_API.Model.Shortage;
 using Magazyn_API.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -81,6 +82,19 @@ namespace Magazyn_API.Data
             return device;
         }
 
+        public List<string> GetAllDeviceNames()
+        {
+            List<string> devices = _db.Devices
+                .Where(p => p.Name != "")
+                .Where(p => p.Name != null)
+                .Select(p => p.Name)
+                .Distinct()
+                .ToList();
+
+
+            return devices;
+        }
+
         public Device GetDevice(Device device)
         {
             var proj = GetProjectByName(device.Group.Project.Name);
@@ -147,6 +161,16 @@ namespace Magazyn_API.Data
             }
                 
             return group;
+        }
+        public List<string> GetAllGroupNames()
+        {
+            List<string> groups = _db.Groups       
+                .Where(p => p.Name != "")
+                .Where(p => p.Name != null)
+                .Select(p => p.Name)
+                .Distinct()
+                .ToList();
+            return groups;
         }
         public GroupModel GetGroupById(int id)
         {
@@ -439,6 +463,17 @@ namespace Magazyn_API.Data
             }
             return project;
         }
+        public List<string> GetAllProjectNames()
+        {
+            List<string> projects = _db.Projects
+                .Where(p => p.Name != "")
+                .Where(p => p.Name != null)
+                .Select(p => p.Name)
+                .Distinct()
+                .ToList();
+
+            return projects;
+        }
         public Project GetProjectById(int id)
         {
             var project = _db.Projects.Where(p => p.Id == id).FirstOrDefault();
@@ -513,6 +548,30 @@ namespace Magazyn_API.Data
             return models;
         }
         #endregion ReleaseItem
+        #region Shortages
+        public List<ShortageItem> GetComponentItemsByProjectGroupAndDevice(string projectName, string groupName, string deviceName)
+        {
+            List<ShortageItem> items = new();
+            items = _db.OrderItems
+                .Where(c => c.Order.State == OrderState.W_TRAKCIE)
+                .Where(c => c.RequiredQuantity > c.CurrentQuantity)
+                .Where(c => (deviceName != "") ? c.Order.Device.Name == deviceName : c.Order.Device.Name.Contains(""))
+                .Where(c => (groupName != "") ? c.Order.Device.Group.Name == groupName : c.Order.Device.Group.Name.Contains(""))
+                .Where(c => (projectName != "") ? c.Order.Device.Group.Project.Name == projectName : c.Order.Device.Group.Project.Name.Contains(""))
+                .Select(c => new ShortageItem()
+                {
+                    Count = c.RequiredQuantity - c.CurrentQuantity,
+                    ProjectName = c.Order.Device.Group.Project.Name,
+                    GroupName = c.Order.Device.Group.Name,
+                    DeviceName = c.Order.Device.Name,
+                    Component = c.Component
+
+                }).ToList();
+
+            return items;
+
+        }
+        #endregion Shortages
         #region VirtualOrder
         public bool DeleteVirtualOrderById(int id)
         {
