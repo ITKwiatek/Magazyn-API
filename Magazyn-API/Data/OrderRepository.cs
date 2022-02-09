@@ -549,6 +549,25 @@ namespace Magazyn_API.Data
         }
         #endregion ReleaseItem
         #region Shortages
+        public List<ShortageItem> GetComponentItemsByOrderId(int orderId)
+        {
+            List<ShortageItem> items = new();
+            items = _db.OrderItems
+                .Where(c => c.Order.State == OrderState.W_TRAKCIE)
+                .Where(c => c.RequiredQuantity > c.CurrentQuantity)
+                .Where(c => c.OrderId == orderId)
+                .Select(c => new ShortageItem()
+                {
+                    Count = c.RequiredQuantity - c.CurrentQuantity,
+                    ProjectName = c.Order.Device.Group.Project.Name,
+                    GroupName = c.Order.Device.Group.Name,
+                    DeviceName = c.Order.Device.Name,
+                    Component = c.Component
+
+                }).ToList();
+
+            return items;
+        }
         public List<ShortageItem> GetComponentItemsByProjectGroupAndDevice(string projectName, string groupName, string deviceName)
         {
             List<ShortageItem> items = new();
@@ -569,7 +588,6 @@ namespace Magazyn_API.Data
                 }).ToList();
 
             return items;
-
         }
         #endregion Shortages
         #region VirtualOrder

@@ -45,6 +45,8 @@ namespace Magazyn_API.Controllers
 
             OrderModelFrontendDto dto = fMapper.OrderModelFrontendDto(order);
 
+            dto.Items = dto.Items.OrderBy(i => i.Component.Supplier).ToList();
+
             return Json(dto);
         }
         [HttpGet("active")]

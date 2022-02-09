@@ -15,6 +15,7 @@ namespace Magazyn_API.Service
         private readonly List<string> _groups;
         private readonly List<string> _devices;
         private readonly List<ShortageItem> componentItems = new List<ShortageItem>();
+        private List<ComponentShortage> shortages = new();
         public ShortageFilterService(IOrderRepository repo, List<string> projects, List<string> groups, List<string> devices)
         {
             _repo = repo;
@@ -24,44 +25,22 @@ namespace Magazyn_API.Service
             _devices = !isNull(devices) ? devices : new List<string> { "" };
         }
 
-        public List<ShortageItem> GetComponentItems()
+        public ShortageFilterService(IOrderRepository repo)
         {
+            _repo = repo;
+        }
 
-            foreach(var proj in _projects)
-            {
-                foreach(var gro in _groups)
-                {
-                    foreach(var dev in _devices)
-                    {
-                        componentItems.AddRange(_repo.GetComponentItemsByProjectGroupAndDevice(proj, gro, dev));
-                    }
-                }
-            }
-            componentItems.OrderBy(i => i.Component.Id);
-            return componentItems;
+        public List<ComponentShortage> GetShortagesByOrderId(int orderId)
+        {
+            GetComponentItemsById(orderId);
+            GroupShortages();
+            return shortages;
         }
 
         public List<ComponentShortage> GetShortages()
         {
-            var components = GetComponentItems();
-            List<ComponentShortage> shortages = new();
-            foreach(var c in components)
-            {
-                if(!shortages.Any(s => s.ComponentId == c.Component.Id))
-                {
-                    shortages.Add(new ComponentShortage { ComponentId = c.Component.Id, Count = c.Count, Items = new() { c } });
-                } else
-                {
-                    foreach(var s in shortages)
-                    {
-                        if(s.ComponentId == c.Component.Id)
-                        {
-                            s.Count += c.Count;
-                            s.Items.Add(c);
-                        }
-                    }
-                }
-            }
+            GetComponentItemsByProjectGroupAndDevice();
+            GroupShortages();
             return shortages;
         }
 
@@ -74,6 +53,50 @@ namespace Magazyn_API.Service
                     return true;
 
             return false;
+        }
+
+        private void GroupShortages()
+        {
+            foreach (var c in componentItems)
+            {
+                if (!shortages.Any(s => s.ComponentId == c.Component.Id))
+                {
+                    shortages.Add(new ComponentShortage { ComponentId = c.Component.Id, Count = c.Count, Items = new() { c } });
+                }
+                else
+                {
+                    foreach (var s in shortages)
+                    {
+                        if (s.ComponentId == c.Component.Id)
+                        {
+                            s.Count += c.Count;
+                            s.Items.Add(c);
+                        }
+                    }
+                }
+            }
+        }
+
+        private List<ShortageItem> GetComponentItemsById(int orderId)
+        {
+            componentItems.AddRange(_repo.GetComponentItemsByOrderId(orderId));
+            return componentItems;
+        }
+
+        private List<ShortageItem> GetComponentItemsByProjectGroupAndDevice()
+        {
+            foreach (var proj in _projects)
+            {
+                foreach (var gro in _groups)
+                {
+                    foreach (var dev in _devices)
+                    {
+                        componentItems.AddRange(_repo.GetComponentItemsByProjectGroupAndDevice(proj, gro, dev));
+                    }
+                }
+            }
+            //componentItems = componentItems.OrderBy(i => i.Component.Id);
+            return componentItems;
         }
     }
 }
