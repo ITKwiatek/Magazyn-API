@@ -21,7 +21,6 @@ namespace Magazyn_API.Controllers
     //[Authorize]
     [ApiController]
     [Route("[controller]")]
-    [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper, UserRoles.Manager, UserRoles.Designer)]
     public class ReleaseController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -37,6 +36,7 @@ namespace Magazyn_API.Controllers
             _fMapper = new FrontendMapper(_repo);
         }
         [HttpGet()]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper, UserRoles.Manager, UserRoles.Designer)]
         public async Task<IActionResult> GetAllReleases()
         {
             //return BadRequest(new Response() { Message = "asdasd", Status = "500" });
@@ -46,6 +46,8 @@ namespace Magazyn_API.Controllers
 
                 var dtos = _fMapper.ReleaseCardsFrontendDto(releases);
 
+                dtos = dtos.OrderByDescending(o => o.Id).ToList();
+
                 return Ok(dtos);
             } catch (Exception e)
             {
@@ -54,6 +56,7 @@ namespace Magazyn_API.Controllers
 
         }
         [HttpGet("{id}")]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper, UserRoles.Manager, UserRoles.Designer)]
         public async Task<IActionResult> GetReleaseById([FromRoute] int id)
         {
             var release = _repo.GetReleaseWithItemsById(id);
@@ -61,6 +64,7 @@ namespace Magazyn_API.Controllers
             return Ok(dto);
         }
         [HttpPost]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
         public async Task<int> Add(JObject data)
         {
             FrontendMapper fMapper = new FrontendMapper(_repo);
@@ -111,12 +115,6 @@ namespace Magazyn_API.Controllers
                 return release.Id;
             }
             return 0;
-        }
-
-        [HttpPost("test")]
-        public async Task<int> Test(int id)
-        {
-            return 1;
         }
     }
 }

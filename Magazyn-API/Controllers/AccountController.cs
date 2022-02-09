@@ -40,8 +40,9 @@ namespace Magazyn_API.Controllers
                 var userId = identity.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var user = await _userManager.FindByIdAsync(userId);
 
-
-                var dto = _userService.UserFrontendDto(user);
+                UserFrontendDto dto = new();
+                if(user != null)
+                    dto = _userService.UserFrontendDto(user);
 
                 return dto;
             }

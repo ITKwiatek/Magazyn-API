@@ -33,7 +33,7 @@ namespace Magazyn_API.Controllers
             _repo.DeleteOrderById(id);
             return true;
         }
-        [AuthorizeRoles(UserRoles.Admin,UserRoles.Manager, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin,UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] int id)
         {
@@ -50,12 +50,14 @@ namespace Magazyn_API.Controllers
             return Json(dto);
         }
         [HttpGet("active")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
         public async Task<IActionResult> GetActiveOrders()
         {
             FrontendMapper mapper = new(_repo);
             var orders = _repo.GetActiveOrders();
             var orderCards = mapper.OrderCards(orders);
+
+            orderCards = orderCards.OrderBy(o => o.DateToRelease).ToList();
 
             return Json(orderCards);
         }
@@ -68,38 +70,46 @@ namespace Magazyn_API.Controllers
             var orders = _repo.GetInActiveOrders();
             var orderCards = mapper.OrderCards(orders);
 
+            orderCards = orderCards.OrderBy(o => o.Id).ToList();
+
             return Json(orderCards);
         }
 
         [HttpGet("new")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
         public async Task<IActionResult> GetNewOrders()
         {
             FrontendMapper mapper = new(_repo);
             var orders = _repo.GetNewOrders();
             var orderCards = mapper.OrderCards(orders);
 
+            orderCards = orderCards.OrderBy(o => o.DateToRelease).ToList();
+
             return Json(orderCards);
         }
 
         [HttpGet("finished")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
         public async Task<IActionResult> GetFinishedOrders()
         {
             FrontendMapper mapper = new(_repo);
             var orders = _repo.GetFinishedOrders();
             var orderCards = mapper.OrderCards(orders);
 
+            orderCards.OrderByDescending(o => o.DateToRelease);
+
             return Json(orderCards);
         }
 
         [HttpGet("unfinished")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Storekeeper)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Storekeeper, UserRoles.Designer)]
         public async Task<IActionResult> GetUnfinishedOrders()
         {
             FrontendMapper mapper = new(_repo);
             var orders = _repo.GetUnfinishedOrders();
             var orderCards = mapper.OrderCards(orders);
+
+            orderCards.OrderByDescending(o => o.DateToRelease);
 
             return Json(orderCards);
         }
