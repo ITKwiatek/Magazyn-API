@@ -68,6 +68,7 @@ namespace Magazyn_API.Data
         #endregion ReleaseItem
         #region Shortages
         public List<ShortageItem> GetComponentItemsByProjectGroupAndDevice(string projectName, string groupName, string deviceName);
+        public List<ShortageItem> GetComponentItemsByOrderId(int orderId);
         #endregion Shortages
         #region VirtualOrder
         public bool DeleteVirtualOrderById(int id);

@@ -47,6 +47,17 @@ namespace Magazyn_API.Controllers
             return groups;
         }
 
+        [HttpGet("{id}")]
+        public async Task<List<ComponentShortage>> GetShortages([FromRoute] int orderId)
+        {
+            ShortageFilterService service = new(_repo);
+            var shortages = service.GetShortagesByOrderId(orderId);
+
+            shortages = shortages.OrderBy(s => s.Items[0].Component.Supplier).ToList();
+
+            return shortages;
+        }
+
         [HttpPost()]
         public async Task<List<ComponentShortage>> GetShortages([FromBody] JObject data)
         {
@@ -57,6 +68,8 @@ namespace Magazyn_API.Controllers
             ShortageFilterService service = new(_repo, projects, groups, devices);     
 
             List<ComponentShortage> shortages = service.GetShortages();
+
+            shortages = shortages.OrderBy(s => s.Items[0].Component.Supplier).ToList();
 
             return shortages;
         }
