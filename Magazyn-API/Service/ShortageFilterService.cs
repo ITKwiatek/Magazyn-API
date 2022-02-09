@@ -48,9 +48,14 @@ namespace Magazyn_API.Service
         {
             if (value == null)
                 return true;
-            if (value.GetType() == typeof(List<>))
+            try
+            {
                 if (value.Count == 0)
                     return true;
+            } catch (Exception e)
+            {
+
+            }
 
             return false;
         }
