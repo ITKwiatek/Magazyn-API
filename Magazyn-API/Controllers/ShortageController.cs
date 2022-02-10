@@ -47,7 +47,7 @@ namespace Magazyn_API.Controllers
             return groups;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{orderId}")]
         public async Task<List<ComponentShortage>> GetShortages([FromRoute] int orderId)
         {
             ShortageFilterService service = new(_repo);
