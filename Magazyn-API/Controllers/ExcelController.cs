@@ -60,7 +60,13 @@ namespace Magazyn_API.Controllers
                 path = await helper.SaveFile(file);
                 if(file.FileName.Substring(file.FileName.Length - 4) == ".xls")
                 {
-                    path = ExcelConverter.ConvertXLS_XLSX(new FileInfo(file.FileName));
+                    try
+                    {
+                        path = ExcelConverter.ConvertXLS_XLSX(new FileInfo(file.FileName));
+                    } catch (Exception e)
+                    {
+                        return Json("Błąd przy konwersji pliku: " + e.Message);
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(path)) 
