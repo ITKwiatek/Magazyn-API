@@ -14,7 +14,7 @@ namespace Magazyn_API.Model.Order
         public int Id { get; set; }
         [MaxLength(30)]
         public string ArticleNumber { get; set; }
-        [MaxLength(30)]
+        [MaxLength(60)]
         public string OrderingNumber { get; set; }
         [MaxLength(35)]
         public string Supplier { get; set; }
