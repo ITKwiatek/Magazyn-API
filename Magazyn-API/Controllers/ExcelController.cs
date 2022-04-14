@@ -58,6 +58,11 @@ namespace Magazyn_API.Controllers
                 FileHelper helper = new FileHelper("C:\\temp\\delete\\");
                 await helper.DeleteFilesInDir();
                 path = await helper.SaveFile(file);
+                if(file.FileName.Substring(file.FileName.Length - 4) == ".xls")
+                {
+                    path = ExcelConverter.ConvertXLS_XLSX(new FileInfo(file.FileName));
+                }
+
                 if (!string.IsNullOrWhiteSpace(path)) 
                 {
                     try
