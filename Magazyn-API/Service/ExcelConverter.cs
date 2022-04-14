@@ -1,4 +1,6 @@
-﻿using System;
+﻿//using Microsoft.Office.Interop.Excel;
+using Spire.Xls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,14 +12,14 @@ namespace Magazyn_API.Service
     {
         public static string ConvertXLS_XLSX(FileInfo file)
         {
-            var app = new Microsoft.Office.Interop.Excel.Application();
+            Workbook workbook = new Workbook();
             var xlsFile = "C:\\temp\\delete\\" + file.Name;
-            var wb = app.Workbooks.Open(xlsFile);
             var xlsxFile = xlsFile + "x";
-            wb.SaveAs(Filename: xlsxFile, FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
-            wb.Close();
-            app.Quit();
-            return xlsxFile;
+            workbook.LoadFromFile(xlsFile);
+            workbook.SaveToFile(xlsxFile, ExcelVersion.Version2013);
+
+            return xlsxFile;   
         }
+
     }
 }
