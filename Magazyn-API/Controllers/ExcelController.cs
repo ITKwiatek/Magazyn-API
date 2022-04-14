@@ -30,7 +30,7 @@ using Magazyn_API.Model.User;
 
 namespace Magazyn_API.Controllers
 {
-    [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
+    [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Designer)]
     [ApiController]
     [Route("[controller]")]
     public class ExcelController : Controller

@@ -686,7 +686,7 @@ namespace Magazyn_API.Data
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Magazyn_API.Controllers
         {
             _repo = repo;
         }
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Designer)]
         [HttpDelete("{id}")]
         public async Task<bool> DeleteOrder([FromRoute]int id)
         {
@@ -63,7 +63,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpGet("inactive")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Designer)]
         public async Task<IActionResult> GetInActiveOrders()
         {
             FrontendMapper mapper = new(_repo);
@@ -115,7 +115,7 @@ namespace Magazyn_API.Controllers
         }
 
         [HttpPut("details")]
-        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager)]
+        [AuthorizeRoles(UserRoles.Admin, UserRoles.Manager, UserRoles.Designer)]
         public async Task<IActionResult> UpdateOrderDetails([FromBody] OrderModelFrontendDto orderDto)
         {
             return Json(_repo.UpdateOrderDetails(orderDto));
