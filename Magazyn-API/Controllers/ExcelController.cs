@@ -99,7 +99,7 @@ namespace Magazyn_API.Controllers
                     }
                 }
             }
-            return Json("Serwer nie był w stanie wczytać pliku...");
+            return Json("Serwer nie był w stanie wczytać pliku... Najczęstszą przyczyną jest zbyt długi ciąg znaków w komponencie");
         }
 
         [HttpGet("Add")]
