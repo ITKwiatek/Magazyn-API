@@ -2,6 +2,7 @@
 using Magazyn_API.Model.Excel.PL_1;
 using Magazyn_API.Model.Mappers;
 using Magazyn_API.Model.Order;
+using Magazyn_API.Service;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -89,23 +90,31 @@ namespace Magazyn_API.Model.Excel
                     string both = getCell(excelOrder.ProjectNameCell);
                     if (string.IsNullOrWhiteSpace(both))
                         return;
-                    string groupNameTemp = both.Remove(0, 5);
-                    int groupNamePosition = 0;
-                    for(int i=5; i<both.Length; i++)
+                    string groupName = "";
+                    string projectName = "";
+                    try
                     {
-                        groupNamePosition = i;
-                        if (Char.IsLetter(both[groupNamePosition]))
-                            break;
+                        if(both.Contains('_'))
+                        {
+                            groupName = both.Split('_')[1];
+                            projectName = both.Split('_')[0];
+                        } else if(both.Contains('-'))
+                        {
+                            if(both.Split('-')[0].Any(x => char.IsLetter(x)))
+                            {
+                                groupName = both.Split('-')[2];
+                                projectName = both.Split('-')[1];
+                            } else
+                            {
+                                groupName = both.Split('-')[1];
+                                projectName = both.Split('-')[0];
+                            }
+                        }
+
+                    } catch (Exception e)
+                    {
+                        LogService.SaveLog($"Blad podczas wczytywania nazwy projektu lub grupy: {both}. Error: {e.Message}");
                     }
-                    int length = both.Length - groupNamePosition;
-                    string groupName = both.Substring(groupNamePosition, both.Length - groupNamePosition);
-
-                    int indexOfGroupName = both.IndexOf(groupName);
-                    string projectName = both.Remove(indexOfGroupName - 1, groupName.Length+1);
-                    if (projectName.Contains('-'))
-                        projectName = projectName.Split('-')[1].Trim();
-
-                    groupName = groupName.Split('-')[0].Trim();
 
                     excelOrder.GroupName = groupName;
                     excelOrder.ProjectName = projectName;

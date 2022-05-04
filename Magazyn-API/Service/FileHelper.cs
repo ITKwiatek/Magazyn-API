@@ -21,7 +21,18 @@ namespace Magazyn_API.Service
 
             foreach (FileInfo file in di.GetFiles())
             {
-                var run = Task.Run(() => file.Delete());
+                try
+                {
+                    var run = Task.Run(() => file.Delete());
+                }
+                catch (IOException e)
+                {
+                    LogService.SaveLog($"Nie udało się usunąć pliku {file.FullName}. Error: {e.Message}");
+                }
+                catch (Exception e)
+                {
+                    LogService.SaveLog($"Nie udało się usunąć pliku {file.FullName}. Error: {e.Message}");
+                }
             }
             return true;
         }
